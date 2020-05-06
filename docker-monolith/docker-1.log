@@ -1,0 +1,10 @@
+gvashchenko@gvashchenko-pc:~$ docker images
+REPOSITORY                                                     TAG                 IMAGE ID            CREATED             SIZE
+gvashchenko/ubuntu-tmp-file                                    latest              6aefda393c31        5 seconds ago       125MB
+ubuntu                                                         16.04               005d2078bdfa        12 days ago         125MB
+ubuntu                                                         latest              4e5021d210f6        6 weeks ago         64.2MB
+node                                                           12-alpine           2e3e67c73c8f        4 months ago        85.2MB
+mongo                                                          latest              a0e2e64ac939        4 months ago        364MB
+postgres                                                       11                  0559daf850ab        5 months ago        332MB
+nginx                                                          latest              540a289bab6c        6 months ago        126MB
+hello-world                                                    latest              fce289e99eb9        16 months ago       1.84kB
