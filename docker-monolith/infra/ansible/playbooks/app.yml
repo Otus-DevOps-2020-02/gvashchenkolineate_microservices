@@ -1,0 +1,21 @@
+---
+- name: Configure app servers
+  hosts: docker
+  become: true
+
+  vars:
+    env: local
+    app_docker_image: gvashchenko/otus-reddit
+    app_docker_version: 1.0
+
+  tasks:
+    - name: Show info about the env this host belongs to
+      debug:
+        msg: "This host is in {{ env }} environment!!!"
+
+    - name: Run app docker container
+      docker_container:
+        name: reddit
+        image: "{{ app_docker_image }}:{{ app_docker_version }}"
+        ports:
+          - "9292:9292"

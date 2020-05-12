@@ -1,0 +1,17 @@
+plugin: gcp_compute
+zones:
+  - europe-west1-b
+projects:
+  - docker-276915
+auth_kind: serviceaccount
+service_account_file: credentials.json
+filters: []
+groups:
+  docker: inventory_hostname.startswith('docker-host')
+hostnames:
+  # List host by name instead of the default public ip
+  - name
+compose:
+  # Set an inventory parameter to use the Public IP address to connect to the host
+  # For Private ip use "networkInterfaces[0].networkIP"
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP

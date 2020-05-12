@@ -31,3 +31,5 @@ ansible/roles/db
 
 # Python virtual env
 venv/
+
+credentials.json

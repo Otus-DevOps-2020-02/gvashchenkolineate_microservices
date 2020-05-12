@@ -1,0 +1,18 @@
+---
+- name: Check && install python
+  hosts: all
+  become: true
+  # Gathering facts requires Python preinstalled, so let's cancel it
+  gather_facts: False
+
+  tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      changed_when: False
+
+    - name: Install Pip
+      apt: name=python-pip state=present
+
+    - name: Install Docker SDK for Python
+      pip:
+        name: docker
