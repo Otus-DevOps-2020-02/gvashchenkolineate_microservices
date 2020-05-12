@@ -1,0 +1,9 @@
+project           = "docker-NNNNNN"
+docker_disk_image = "docker-host-NNNNNNNNNN"
+instance_count    = 2
+user_public_key_path_map = {
+  // user : path to public key
+  "appuser1" : "~/.ssh/key.pub"
+}
+public_key_path  = "~/.ssh/key.pub"
+private_key_path = "~/.ssh/key"
