@@ -25,6 +25,9 @@ docker images -a
 # Run the app container from created image
 docker run --name reddit -d --network=host reddit:latest
 
+# Or run app container from docker hub image
+# docker run --name reddit -d -p 9292:9292 gvashchenko/otus-reddit:1.0
+
 # Check the machine created and its public IP
 docker-machine ls
 
