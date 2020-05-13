@@ -1,0 +1,36 @@
+{
+  "variables": {
+    "project_ID": null,
+    "zone": "europe-west1-b",
+    "source_image_family": null,
+    "network": "default",
+    "machine_type": "n1-standard-1",
+    "disk_type": "pd-standard",
+    "disk_size": "10"
+  },
+  "builders": [
+    {
+      "type": "googlecompute",
+      "project_id": "{{user `project_ID`}}",
+      "image_name": "docker-host-{{timestamp}}",
+      "image_description": "VM with Docker pre-installed",
+      "image_family": "docker-base",
+      "source_image_family": "{{user `source_image_family`}}",
+      "zone": "{{user `zone`}}",
+      "network": "{{user `network`}}",
+      "ssh_username": "appuser",
+      "machine_type": "{{user `machine_type`}}",
+      "disk_type": "{{user `disk_type`}}",
+      "disk_size": "{{user `disk_size`}}",
+      "tags": [
+        "docker-host"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "playbook_file": "ansible/playbooks/packer_docker.yml"
+    }
+  ]
+}

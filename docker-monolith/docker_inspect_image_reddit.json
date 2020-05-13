@@ -1,0 +1,96 @@
+[
+    {
+        "Id": "sha256:4cd0b0e5202c3041ab12036ccdd14c97fc7f1037f6ca14315abce209688b5778",
+        "RepoTags": [
+            "gvashchenko/otus-reddit:1.0"
+        ],
+        "RepoDigests": [
+            "gvashchenko/otus-reddit@sha256:cd916e3edab2334b5dcb19614f1319239790acb2b2398f4fa14af165063fc9bc"
+        ],
+        "Parent": "",
+        "Comment": "",
+        "Created": "2020-05-11T16:13:33.581294634Z",
+        "Container": "e88a695e50546103cf00084baf0a866e7193bab9652167760ff70db58a45500c",
+        "ContainerConfig": {
+            "Hostname": "e88a695e5054",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "/bin/sh",
+                "-c",
+                "#(nop) ",
+                "CMD [\"/start.sh\"]"
+            ],
+            "Image": "sha256:252d42d254d82492fc6bcfd99c06da72d14c3a563a3670e69f0728875007d87d",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "DockerVersion": "19.03.8",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "/start.sh"
+            ],
+            "Image": "sha256:252d42d254d82492fc6bcfd99c06da72d14c3a563a3670e69f0728875007d87d",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 695428470,
+        "VirtualSize": 695428470,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/4a64316266fd00c9042a4971cc60be7cfe99ae17a3241c670e3c89a1931f23ac/diff:/var/lib/docker/overlay2/214d36247d1f1c3af349607cd513e393ddfcd8ac303c15bc85e5017d6e763f48/diff:/var/lib/docker/overlay2/79b1f8462dd68c24c7951e333660450c2cb11beb6fe2bc685985d2dd9aad30f5/diff:/var/lib/docker/overlay2/24e53a7c959f282b1cc1a13dddb6dc721fa8366ec239fb3c7046c3bbf8140d6e/diff:/var/lib/docker/overlay2/46e71290c7a28f9b64513a7eccddd0841507cbe96a799f2f20dccaca81140175/diff:/var/lib/docker/overlay2/0f073b817f1f37b479a035f3beb674ca2218d2f29f9628eb3568bf66d1bf89a9/diff:/var/lib/docker/overlay2/b72a72cbeb078a45004e0ff05fed8a72361b63df9a94bc57c90e96bc895be877/diff:/var/lib/docker/overlay2/f497ea220446ad7d7ae7fb5a42aa4fcac2a9d036beb2b27e9784c0d568541cca/diff",
+                "MergedDir": "/var/lib/docker/overlay2/591767cf6091733b8ecd0dab18d6cede92e8d6021bf0dd8637606c04efbbaa59/merged",
+                "UpperDir": "/var/lib/docker/overlay2/591767cf6091733b8ecd0dab18d6cede92e8d6021bf0dd8637606c04efbbaa59/diff",
+                "WorkDir": "/var/lib/docker/overlay2/591767cf6091733b8ecd0dab18d6cede92e8d6021bf0dd8637606c04efbbaa59/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:b592b5433bbffb04389a0e6349cdba6af8d006779bbb93beb69aa77d59133be4",
+                "sha256:4a048ea09024fc68a2d21f8614d9e49f246efe0902dee85fb27ccc8ac17be73b",
+                "sha256:0d3833376c2f2b31bbaa02e419615355fd529b624b2cda1ef1dca0c856a25e73",
+                "sha256:64d2e4aaa54cf6b127584b366d73d4ab66ca40897cd88e1f9fe971e7f2e09082",
+                "sha256:06880b0a380d2ebe2b8ba458567663d1642df79628432c3562adfa95f0afe12f",
+                "sha256:aab28a669fff8932ce30ee2babe770ea250a6fd8c958ce7fb6b09e4b8104cb2a",
+                "sha256:33732e946af5d65e246a6ad97402164de383365f20ca1a50a4a230fa0e990e2d",
+                "sha256:391c737279de65b69b59e2b8c62e04e9416bdfb0a8b007f1e5c2e32eda91c22e",
+                "sha256:686be8579a4305a9f7a96a39e9d50db62552ba0f490a6a010067e7d9d7ea1ab3"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "0001-01-01T00:00:00Z"
+        }
+    }
+]
