@@ -1,12 +1,15 @@
-FROM ruby:2.2
+FROM ubuntu:16.04
+RUN apt-get update \
+    && apt-get install -y ruby-full ruby-dev build-essential \
+    && gem install bundler --no-ri --no-rdoc
 
-RUN apt-get update -qq && apt-get install -y build-essential
+ENV APP_HOME /app
+RUN mkdir $APP_HOME
 
-WORKDIR /app
-
-COPY Gemfile* ./
+WORKDIR $APP_HOME
+ADD Gemfile* $APP_HOME/
 RUN bundle install
-COPY . .
+ADD . $APP_HOME
 
 ENV POST_SERVICE_HOST post
 ENV POST_SERVICE_PORT 5000
