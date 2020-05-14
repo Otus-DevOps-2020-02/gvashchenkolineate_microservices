@@ -2,13 +2,11 @@ FROM ruby:2.2
 
 RUN apt-get update -qq && apt-get install -y build-essential
 
-ENV APP_HOME /app
-RUN mkdir $APP_HOME
+WORKDIR /app
 
-WORKDIR $APP_HOME
-ADD Gemfile* $APP_HOME/
+COPY Gemfile* ./
 RUN bundle install
-ADD . $APP_HOME
+COPY . .
 
 ENV POST_SERVICE_HOST post
 ENV POST_SERVICE_PORT 5000
