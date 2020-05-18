@@ -1,0 +1,10 @@
+# Image diff
+# Command to generate such table
+#     docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | grep gvashchenko | sort
+
+gvashchenko/comment     1.0    752MB
+gvashchenko/comment     2.0    243MB
+gvashchenko/post        1.0    110MB
+gvashchenko/ui          1.0    786MB
+gvashchenko/ui          2.0    462MB
+gvashchenko/ui          3.0    246MB

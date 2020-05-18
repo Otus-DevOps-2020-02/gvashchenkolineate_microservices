@@ -4,6 +4,8 @@ set -ex
 echo Kill running containers
 docker kill $(docker ps -q)
 
+# ---------------------------------------------------------------- Build basic images
+
 echo Set dockerhub login for next command substitution
 DOCKERHUB_LOGIN=gvashchenko
 # or in terminal:
@@ -14,6 +16,8 @@ docker pull mongo:latest
 docker build -t $DOCKERHUB_LOGIN/post:1.0 ./post-py
 docker build -t $DOCKERHUB_LOGIN/comment:1.0 ./comment
 docker build -t $DOCKERHUB_LOGIN/ui:1.0 ./ui
+
+# ---------------------------------------------------------------- Network
 
 echo Create docker network for the app
 docker network create reddit
