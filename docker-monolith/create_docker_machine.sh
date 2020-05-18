@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ex
 
 # First, authenticate with GCE
 # Run the following in terminal and approve in your browser
@@ -16,21 +17,8 @@ docker-machine create --driver google \
 # Switch to use created machine
 eval $(docker-machine env docker-host)
 
-# Build the app image
-docker build -t reddit:latest .
-
-# List all itermadiate docker images created:
-docker images -a
-
-# Run the app container from created image
-docker run --name reddit -d --network=host reddit:latest
-
-# Or run app container from docker hub image
-# docker run --name reddit -d -p 9292:9292 gvashchenko/otus-reddit:1.0
-
 # Check the machine created and its public IP
 docker-machine ls
 
-# Now, one can surf to http:<IP>:9292 to check the app is working
-# Don't forget to add GCP firewall rule to allow Puma connections on port 9292.
+# Don't forget to add GCP firewall rules, e.g. to allow Puma connections on port 9292.
 # Use gcloud_add_firewall_rule_puma.sh
