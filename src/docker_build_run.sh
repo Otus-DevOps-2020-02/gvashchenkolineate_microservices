@@ -6,6 +6,8 @@ docker kill $(docker ps -q)
 
 echo Set dockerhub login for next command substitution
 DOCKERHUB_LOGIN=gvashchenko
+# or in terminal:
+# export DOCKERHUB_LOGIN=gvashchenko
 
 echo Build docker images from sources
 docker pull mongo:latest
@@ -46,6 +48,18 @@ docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | grep gvash
 
 echo Run docker containers from minimized images
 docker run -d --network=reddit --network-alias=post_db --network-alias=comment_db mongo:latest
+docker run -d --network=reddit --network-alias=post $DOCKERHUB_LOGIN/post:1.0
+docker run -d --network=reddit --network-alias=comment $DOCKERHUB_LOGIN/comment:2.0
+docker run -d --network=reddit -p 9292:9292 $DOCKERHUB_LOGIN/ui:3.0
+
+# ---------------------------------------------------------------- Volumes
+
+echo Create volume for Mongo data
+docker volume create reddit_db
+
+echo Run docker containers with created volume
+docker kill $(docker ps -q)
+docker run -d --network=reddit --network-alias=post_db --network-alias=comment_db -v reddit_db:/data/db mongo:latest
 docker run -d --network=reddit --network-alias=post $DOCKERHUB_LOGIN/post:1.0
 docker run -d --network=reddit --network-alias=comment $DOCKERHUB_LOGIN/comment:2.0
 docker run -d --network=reddit -p 9292:9292 $DOCKERHUB_LOGIN/ui:3.0
