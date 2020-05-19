@@ -88,3 +88,45 @@ gvashchenkolineate microservices repository
   - Проверить приложения, развернутые проектом [infra](./docker-monolith/infra),
     можно перейдя по адресам `http://<ip>:9292`,
     где `ip` - адреса `docker-host-external-ip` из вывода команды `terraform output`
+
+
+
+---
+
+# ДЗ-13 "Docker-образы. Микросервисы"
+
+## В процессе сделано:
+
+  - Проект _reddit-microservices_ скачан как [src](./src)
+
+  - Последующие docker-команды выполняются на созданной в GCE docker-machine
+    _docker-host_ c внешним ip `docker-host-ip`
+
+  - Для каждого сервиса (post, comment, ui) создан Dockerfile и собран образ
+
+  - Также созданы bridge-сеть `reddit` и volume для MongoDB `reddit_db`
+
+  - (⭐) Контейнеры запущены с сетевыми алиасами, отличными от тех, что задаются в самих Dockerfile-ах.
+    Dns сервисов передаются другим сервисам через `--env` аргументы команды `docker run`.
+    См. подробнее в [docker_run_with_new_envvars_and_aliases.sh](./src/docker_run_with_new_envvars_and_aliases.sh)
+
+  - (⭐) Произведена оптимизация (минимизация размера) образов ui и comment сервисов
+    путём их сборки на основе Ubuntu или Alpine-Linux, см.
+    - [post/Dockerfile](./src/post-py/Dockerfile)
+    - [comment/Dockerfile](./src/comment/Dockerfile)
+    - [ui/Dockerfile](./src/ui/Dockerfile)
+    - [ui/Dockerfile.3](./src/ui/Dockerfile.3)
+
+    Сравнение размеров получающихся образов см. в [image_size_diff](./src/image_size_diff)
+
+## Как запустить проект:
+
+  - Создать _docker-host_ и подключиться к нему (см. [create_docker_machine](./docker-monolith/create_docker_machine.sh))
+
+  - Выполнить необходимые команды создания bridge-сети, volume, сборки образов, запуска контейнера и т.п.
+    (см. в [docker_build_run.sh](./src/docker_build_run.sh)
+    или [docker_run_with_new_envvars_and_aliases.sh](./src/docker_run_with_new_envvars_and_aliases.sh))
+
+## Как проверить работоспособность:
+
+  - Каждая конфигурация запущенных сервисов проверяется обращением к http://`docker-host-ip`:9292
