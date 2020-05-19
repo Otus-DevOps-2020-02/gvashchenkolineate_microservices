@@ -130,3 +130,35 @@ gvashchenkolineate microservices repository
 ## Как проверить работоспособность:
 
   - Каждая конфигурация запущенных сервисов проверяется обращением к http://`docker-host-ip`:9292
+
+
+
+---
+
+# ДЗ-14 "Docker: сети, docker-compose"
+
+## В процессе сделано:
+
+  - Базовое имя проекта в docker-compose по-умолчанию - имя каталога, т.е. [src](./src).
+    Чтобы изменить это можно:
+      - задать переменную [`COMPOSE_PROJECT_NAME`](https://docs.docker.com/compose/reference/envvars/#compose_project_name) в _.env_
+      - или передавать через ключ [`-p, --project-name`](https://docs.docker.com/compose/reference/overview/#use--p-to-specify-a-project-name) команды `docker compose`:
+
+            docker-compose -p reddit up -d
+
+      _Замечание: Второй способ (через ключ команды) имеет приоритет перед переменной_
+
+## Как запустить проект:
+
+  - Создать _docker-host_ и подключиться к нему (см. [create_docker_machine](./docker-monolith/create_docker_machine.sh))
+
+  - Выполнить необходимые команды создания сетей, volume, сборки образов, запуска контейнера и т.п.
+    (см. в [docker_build_run.sh](./src/docker_build_run.sh))
+    или docker-compose команды
+
+        docker-compose up -d
+        docker-compose down
+
+## Как проверить работоспособность:
+
+  - Каждая конфигурация запущенных сервисов проверяется обращением к http://`docker-host-ip`:9292
