@@ -130,3 +130,55 @@ gvashchenkolineate microservices repository
 ## Как проверить работоспособность:
 
   - Каждая конфигурация запущенных сервисов проверяется обращением к http://`docker-host-ip`:9292
+
+
+
+---
+
+# ДЗ-14 "Docker: сети, docker-compose"
+
+## В процессе сделано:
+
+  - Выполнены эксперименты с запуском docker-контейнеров в сети под драйверами none, host, bridge
+
+  - Запуск больше одного контейнера nginx с `--network host` не возможен
+    из-за ошибки уже занятости пота,
+    в отличие от запуска nginx с `--network none`, когда каждый раз создаётся отдельный network namespace.
+
+  - Сервисы reddit_microservices запущены через `docker run` с использование двух сетей _front_net_ и _back_net_,
+    так чтобы ui не имел доступа к mongodb.
+    Для этого подсоединять контейнеры ко вторых сетям необходимо вручную.
+
+  - Проведены исследования bridge-интерфейсов и сетей на docker-machine.
+
+  - Добавлен [docker-compose.yml](./src/docker-compose.yml),
+    адаптирован под случай двух сетей (front_net, back_net),
+    и параметризован с использованием файла [.env](./src/.env.example).
+
+  - Базовое имя проекта в docker-compose по-умолчанию - имя каталога, т.е. [src](./src).
+    Чтобы изменить это можно:
+      - задать переменную [`COMPOSE_PROJECT_NAME`](https://docs.docker.com/compose/reference/envvars/#compose_project_name) в _.env_
+      - или передавать через ключ [`-p, --project-name`](https://docs.docker.com/compose/reference/overview/#use--p-to-specify-a-project-name) команды `docker compose`:
+
+            docker-compose -p reddit up -d
+
+      _Замечание: Второй способ (через ключ команды) имеет приоритет перед переменной_
+
+  - (⭐) Создан [docker-compose.override.yml](./src/docker-compose.override.yml)
+    для запуска puma в режиме _debug_ с двумя воркерами,
+    а также с возможностью динамического редактирования кода
+
+## Как запустить проект:
+
+  - Создать _docker-host_ и подключиться к нему (см. [create_docker_machine](./docker-monolith/create_docker_machine.sh))
+
+  - Выполнить необходимые команды создания сетей, volume, сборки образов, запуска контейнера и т.п.
+    (см. в [docker_build_run.sh](./src/docker_build_run.sh))
+    или docker-compose команды
+
+        docker-compose up -d
+        docker-compose down
+
+## Как проверить работоспособность:
+
+  - Каждая конфигурация запущенных сервисов проверяется обращением к http://`docker-host-ip`:9292

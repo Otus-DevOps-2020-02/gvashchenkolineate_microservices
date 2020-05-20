@@ -6,9 +6,9 @@ RUN apt-get update \
 
 WORKDIR /app
 
-ADD Gemfile* ./
+COPY Gemfile* ./
 RUN bundle install
-ADD . .
+COPY . .
 
 ENV POST_SERVICE_HOST post
 ENV POST_SERVICE_PORT 5000

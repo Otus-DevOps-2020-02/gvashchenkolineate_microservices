@@ -1,0 +1,37 @@
+# docker-machine ssh docker-host ifconfig
+
+br-f00989ab6a2b Link encap:Ethernet  HWaddr 02:42:c9:8a:37:82
+          inet addr:172.18.0.1  Bcast:172.18.255.255  Mask:255.255.0.0
+          inet6 addr: fe80::42:c9ff:fe8a:3782/64 Scope:Link
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:26 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:37 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:3331 (3.3 KB)  TX bytes:3834 (3.8 KB)
+
+docker0   Link encap:Ethernet  HWaddr 02:42:24:f9:4e:f4
+          inet addr:172.17.0.1  Bcast:172.17.255.255  Mask:255.255.0.0
+          inet6 addr: fe80::42:24ff:fef9:4ef4/64 Scope:Link
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:15591 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:17084 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:1259384 (1.2 MB)  TX bytes:424977149 (424.9 MB)
+
+ens4      Link encap:Ethernet  HWaddr 42:01:0a:84:00:09
+          inet addr:10.132.0.9  Bcast:10.132.0.9  Mask:255.255.255.255
+          inet6 addr: fe80::4001:aff:fe84:9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1460  Metric:1
+          RX packets:179282 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:153292 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:1046752205 (1.0 GB)  TX bytes:18576257 (18.5 MB)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)

@@ -33,3 +33,5 @@ ansible/roles/db
 venv/
 
 credentials.json
+
+.env

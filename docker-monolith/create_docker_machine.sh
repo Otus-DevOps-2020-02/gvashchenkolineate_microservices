@@ -22,3 +22,6 @@ docker-machine ls
 
 # Don't forget to add GCP firewall rules, e.g. to allow Puma connections on port 9292.
 # Use gcloud_add_firewall_rule_puma.sh
+
+# Connect to the machine
+docker-machine ssh docker-host
