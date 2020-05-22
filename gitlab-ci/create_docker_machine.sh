@@ -32,6 +32,9 @@ docker-machine ssh $DOCKER_MACHINE_NAME "sudo dockerd"
 docker-machine ssh $DOCKER_MACHINE_NAME "sudo mkdir -p /srv/gitlab/config /srv/gitlab/data /srv/gitlab/logs"
 docker-machine ssh $DOCKER_MACHINE_NAME "sudo chown -R docker-user:docker-user /srv/gitlab"
 
+# Get ip of gitlab instance
+docker-machine ip $DOCKER_MACHINE_NAME
+
 # Create docker-compose file
 docker-machine ssh $DOCKER_MACHINE_NAME "cat << EOF > /srv/gitlab/docker-compose.yml
   web:
@@ -54,17 +57,14 @@ EOF"
 # Start Gitlab CI
 docker-machine ssh $DOCKER_MACHINE_NAME "cd /srv/gitlab; sudo docker-compose up -d"
 
-# Get ip of gitlab instance
-docker-machine ip $DOCKER_MACHINE_NAME
+# ... Gitlab initialization may take a while ...
 
-# Switch to use created machine
-#eval $(docker-machine env $DOCKER_MACHINE_NAME)
+# Add a Gitlab runner
+docker-machine ssh $DOCKER_MACHINE_NAME "sudo docker run -d --name gitlab-runner --restart always \
+  -v /srv/gitlab-runner/config:/etc/gitlab-runner \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  gitlab/gitlab-runner:latest"
 
-# Check the machine created and its public IP
-#docker-machine ls
-
-# Don't forget to add GCP firewall rules, e.g. to allow Puma connections on port 9292.
-# Use gcloud_add_firewall_rule_puma.sh
-
-# Connect to the machine
-#docker-machine ssh $DOCKER_MACHINE_NAME
+# Register the runner
+# docker-machine ssh $DOCKER_MACHINE_NAME
+# sudo docker exec -it gitlab-runner gitlab-runner register --run-untagged --locked=false
