@@ -7,6 +7,7 @@ gem 'bcrypt'
 gem 'puma'
 gem 'mongo'
 gem 'json'
+gem 'rack-test'
 
 group :development do
     gem 'capistrano',         require: false
