@@ -4,6 +4,8 @@ stages:
   - build
   - test
   - review
+  - stage
+  - production
 
 variables:
   DATABASE_URL: 'mongodb://mongo/user_posts'
@@ -11,12 +13,12 @@ variables:
 before_script:
   - cd reddit
   - bundle install
-
+# ---------------------------------------------------------- build
 build_job:
   stage: build
   script:
     - echo 'Building'
-
+# ---------------------------------------------------------- test
 test_unit_job:
   stage: test
   services:
@@ -29,7 +31,7 @@ test_integration_job:
   stage: test
   script:
     - echo 'Testing 2'
-
+# ---------------------------------------------------------- deploy
 deploy_dev_job:
   stage: review
   script:
@@ -37,3 +39,21 @@ deploy_dev_job:
   environment:
     name: dev
     url: http://dev.example.com
+
+staging:
+  stage: stage
+  when: manual
+  script:
+    - echo 'Deploy'
+  environment:
+    name: stage
+    url: https://beta.example.com
+
+production:
+  stage: production
+  when: manual
+  script:
+    - echo 'Deploy'
+  environment:
+    name: production
+    url: https://example.com
