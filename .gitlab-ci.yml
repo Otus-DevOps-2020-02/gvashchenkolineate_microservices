@@ -8,6 +8,8 @@ stages:
   - production
 
 variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
   DATABASE_URL: 'mongodb://mongo/user_posts'
 
 before_script:
@@ -16,8 +18,16 @@ before_script:
 # ---------------------------------------------------------- build
 build_job:
   stage: build
+  image: docker:19.03.8-dind
+  services:
+    - docker:19.03.8-dind
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - echo 'Building'
+    - docker build -t $CI_REGISTRY/howework/example/reddit:$CI_COMMIT_SHORT_SHA ./docker-monolith
+    - docker push $CI_REGISTRY/howework/example/reddit:$CI_COMMIT_SHORT_SHA
 # ---------------------------------------------------------- test
 test_unit_job:
   stage: test
@@ -34,15 +44,24 @@ test_integration_job:
 # ---------------------------------------------------------- deploy
 deploy_dev_job:
   stage: review
+  image: docker:19.03.8
+  services:
+    - docker:19.03.8-dind
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - echo 'Deploy'
+    - docker run $CI_REGISTRY/howework/example/reddit:$CI_COMMIT_SHORT_SHA
   environment:
     name: dev
     url: http://dev.example.com
 
 branch review:
   stage: review
-  script: echo "Deploy to $CI_ENVIRONMENT_SLUG"
+  script:
+    - echo "Deploy to $CI_ENVIRONMENT_SLUG"
+    - docker run --name reddit -d --network=host reddit:latest
   environment:
     name: branch/$CI_COMMIT_REF_NAME
     url: http://$CI_ENVIRONMENT_SLUG.example.com
