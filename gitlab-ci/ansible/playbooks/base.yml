@@ -1,0 +1,21 @@
+---
+- name: Check && install python
+  hosts: gitlab
+  become: true
+  # Gathering facts requires Python preinstalled, so let's cancel it
+  gather_facts: False
+
+  tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      changed_when: False
+
+    - name: Install Pip
+      apt: update_cache=yes name=python-pip state=present
+
+    - name: Upgrade Pip
+      pip: name=pip state=forcereinstall
+
+    - name: Install Docker SDK for Python
+      pip:
+        name: [ 'zipp==1.0.0', 'docker', 'docker-compose' ]

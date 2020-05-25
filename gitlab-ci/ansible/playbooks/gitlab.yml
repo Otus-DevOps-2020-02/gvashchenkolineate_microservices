@@ -1,0 +1,7 @@
+---
+- name: Manage Gitlab instance
+  hosts: gitlab
+  become: true
+
+  roles:
+    - gitlab

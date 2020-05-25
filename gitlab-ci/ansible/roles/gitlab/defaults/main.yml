@@ -1,0 +1,16 @@
+---
+user: docker-user
+group: docker-user
+
+docker_image: gitlab/gitlab-ce:latest
+hostname: gitlab.example.com
+
+runner:
+  tags:
+    - linux
+    - xenial
+    - ubuntu
+    - docker
+  docker_image: "alpine:latest"
+  executor: docker
+  description: docker-runner

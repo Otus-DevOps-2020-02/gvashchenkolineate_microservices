@@ -1,0 +1,23 @@
+---
+- name: Include vars for maintain runners
+  include_vars:
+    file: ./vars/runner.yml
+  no_log: true
+
+- name: Generate a name for runner container
+  set_fact:
+    container_name: "runner-{{ '%Y%m%d%H%M%S' | strftime }}"
+
+- debug: var=runner
+  tags: debug
+
+- name: Start new runner as docker container
+  docker_container:
+    image: gitlab/gitlab-runner:latest
+    name: "{{ container_name }}"
+    restart_policy: always
+    detach: yes
+    volumes:
+      - /srv/gitlab-runner/config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+  notify: register runner

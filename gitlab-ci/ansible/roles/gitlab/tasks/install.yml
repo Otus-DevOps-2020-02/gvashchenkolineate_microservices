@@ -1,0 +1,46 @@
+---
+- name: Create necessary directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: 0755
+  with_items:
+    - /srv/gitlab/config
+    - /srv/gitlab/data
+    - /srv/gitlab/logs
+
+#- name: Create docker-compose.yml
+#  template:
+#    src: docker-compose.yml.j2
+#    dest: /srv/gitlab/docker-compose.yml
+#    mode: 0644
+
+- name: Start gitlab with docker-compose
+  docker_compose:
+    project_name: gitlab
+    definition:
+      web:
+        image: "{{ docker_image }}"
+        restart: always
+        hostname: "{{ hostname }}"
+        environment:
+          GITLAB_OMNIBUS_CONFIG: |
+            external_url 'http://{{ public_ip }}'
+        ports:
+          - '80:80'
+          - '443:443'
+          - '2222:22'
+        volumes:
+          - '/srv/gitlab/config:/etc/gitlab'
+          - '/srv/gitlab/logs:/var/log/gitlab'
+          - '/srv/gitlab/data:/var/opt/gitlab'
+  register: output
+
+- debug: var=output
+  tags: debug
+
+- assert:
+    that:
+      - "web.gitlab_web_1.state.running"

@@ -20,6 +20,7 @@ variables.json
 # Ansible community roles
 jdauphant.nginx
 ansible/roles/db
+vault.key
 
 # Vagrant & Molecule
 .vagrant/
