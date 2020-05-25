@@ -26,11 +26,11 @@ build_job:
   image: docker:stable-dind
   before_script:
     - docker info
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - echo $DOCKER_REGISTRY_PASSWORD | docker login -u $DOCKER_REGISTRY_USER --password-stdin
   script:
     - echo 'Building'
-    - docker build -t $CI_REGISTRY/howework/example/reddit:$CI_COMMIT_SHORT_SHA ./docker-monolith
-    - docker push $CI_REGISTRY/howework/example/reddit:$CI_COMMIT_SHORT_SHA
+    - docker build -t $DOCKER_REGISTRY_USER/reddit:$CI_COMMIT_SHORT_SHA ./docker-monolith
+    - docker push $DOCKER_REGISTRY_USER/reddit:$CI_COMMIT_SHORT_SHA
 # ---------------------------------------------------------- test
 test_unit_job:
   stage: test
@@ -50,10 +50,10 @@ deploy_dev_job:
   image: docker:stable-dind
   before_script:
     - docker info
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+      - echo $DOCKER_REGISTRY_PASSWORD | docker login -u $DOCKER_REGISTRY_USER --password-stdin
   script:
     - echo 'Deploy'
-    - docker run $CI_REGISTRY/howework/example/reddit:$CI_COMMIT_SHORT_SHA
+    - docker run $DOCKER_REGISTRY_USER/reddit:$CI_COMMIT_SHORT_SHA
   environment:
     name: dev
     url: http://dev.example.com
