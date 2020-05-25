@@ -2,7 +2,6 @@ image: docker:stable
 
 services:
   - docker:stable-dind
-  - ruby:2.4.2
 
 stages:
   - build
@@ -18,8 +17,9 @@ variables:
   DATABASE_URL: 'mongodb://mongo/user_posts'
 
 before_script:
-  - cd reddit
-  - bundle install
+#  - cd reddit
+# TODO Fix problem: /bin/sh: eval: line 92: bundle: not found
+#  - bundle install
 # ---------------------------------------------------------- build
 build_job:
   stage: build
