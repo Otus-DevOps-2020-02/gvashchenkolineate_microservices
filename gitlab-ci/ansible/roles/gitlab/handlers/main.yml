@@ -10,5 +10,6 @@
     --tag-list "{{ runner.tags | join(',') }}" \
     --executor "{{ runner.executor }}" \
     --docker-image {{ runner.docker_image }} \
+    --docker-privileged \
     --run-untagged \
     --locked=false

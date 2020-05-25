@@ -11,6 +11,6 @@ runner:
     - xenial
     - ubuntu
     - docker
-  docker_image: "alpine:latest"
+  docker_image: "docker:stable"
   executor: docker
   description: docker-runner
