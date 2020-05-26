@@ -1,0 +1,94 @@
+image: ruby:2.4.2
+
+services:
+  - docker:stable-dind
+
+stages:
+  - build
+  - test
+  - review
+  - stage
+  - production
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+  DATABASE_URL: 'mongodb://mongo/user_posts'
+
+before_script:
+#  - cd reddit
+# TODO Fix problem: /bin/sh: eval: line 92: bundle: not found
+#  - bundle install
+# ---------------------------------------------------------- build
+build_job:
+  stage: build
+  image: docker:stable-dind
+  before_script:
+    - docker info
+    - echo $DOCKER_REGISTRY_PASSWORD | docker login -u $DOCKER_REGISTRY_USER --password-stdin
+  script:
+    - echo 'Building'
+    - docker build -t $DOCKER_REGISTRY_USER/reddit:$CI_COMMIT_SHORT_SHA ./docker-monolith
+    - docker push $DOCKER_REGISTRY_USER/reddit:$CI_COMMIT_SHORT_SHA
+# ---------------------------------------------------------- test
+test_unit_job:
+  stage: test
+  services:
+    - mongo:latest
+  script:
+    - echo 'Testing 1'
+    - ruby simpletest.rb
+
+test_integration_job:
+  stage: test
+  script:
+    - echo 'Testing 2'
+# ---------------------------------------------------------- deploy
+deploy_dev_job:
+  stage: review
+  image: docker:stable-dind
+  before_script:
+    - docker info
+      - echo $DOCKER_REGISTRY_PASSWORD | docker login -u $DOCKER_REGISTRY_USER --password-stdin
+  script:
+    - echo 'Deploy'
+    - docker run $DOCKER_REGISTRY_USER/reddit:$CI_COMMIT_SHORT_SHA
+  environment:
+    name: dev
+    url: http://dev.example.com
+
+branch review:
+  stage: review
+  script:
+    - echo "Deploy to $CI_ENVIRONMENT_SLUG"
+    - docker run --name reddit -d --network=host reddit:latest
+  environment:
+    name: branch/$CI_COMMIT_REF_NAME
+    url: http://$CI_ENVIRONMENT_SLUG.example.com
+  only:
+    - branches
+  except:
+    - master
+
+staging:
+  stage: stage
+  when: manual
+  only:
+    - /^\d+\.\d+\.\d+/
+  script:
+    - echo 'Deploy'
+  environment:
+    name: stage
+    url: https://beta.example.com
+
+production:
+  stage: production
+  when: manual
+  only:
+    - /^\d+\.\d+\.\d+/
+  script:
+    - echo 'Deploy'
+  environment:
+    name: production
+    url: https://example.com

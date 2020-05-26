@@ -182,3 +182,64 @@ gvashchenkolineate microservices repository
 ## Как проверить работоспособность:
 
   - Каждая конфигурация запущенных сервисов проверяется обращением к http://`docker-host-ip`:9292
+
+
+
+---
+
+# ДЗ-15 "Устройство Gitlab CI. Построение процесса непрерывной поставки"
+
+## В процессе сделано:
+
+  - С помощью docker-machine поднимается GCP-инстанс (см. [docker-machine/create.sh](./gitlab-ci/docker-machine/create.sh))
+
+  - Установлен Gitlab CI и запущены Runner-ы.
+    Два способа:
+
+    - с помощью docker-machine ssh-команд (см. скрипты в [docker-machine](./gitlab-ci/docker-machine))
+      Этот способ не очень удобен, т.к. ssh-команды разрастаются,
+      как например в случае автоматизированного запуска и регистрации runner'а.
+
+    - с помощью [Ansible плэйбуков](./gitlab-ci/ansible) и динамического docker-machine инвентори.
+      См. подробнее в [ansible/README.md](./gitlab-ci/ansible/README.md)
+
+  - Создан Gitlab-проект и настроен для использования CI/CD.
+    Этот репозиторий запушен в него как в дополнительный remote.
+
+  - CI/CD сконфигурирован запускать тесты, поднимать динамические окружения
+    с учетом требований к веткам и других ограничений (тэги, ручной запуск).
+
+  - (⭐) В шаг build попробовал добавить сборку образа reddit-приложения.
+    **!!! Оставлен *TODO*, т.к. не работают bundle и ruby !!!**
+
+  - (⭐) Для автоматизации добавления раннера создана Ansible роль [gitlab](./gitlab-ci/ansible/roles/gitlab)
+
+  - (⭐) Настроена интеграция со Slack-каналом [#georgy-vashchenko](https://devops-team-otus.slack.com/messages/georgy_vashchenko)
+
+## Как запустить проект:
+
+  - Создать _docker-host_ и подключиться к нему (см. [create_docker_machine](./gitlab-ci/docker-machine/create.sh)
+
+  - Выполнить подготовку хоста
+
+        ansible-playbook ./playbooks/base.yml
+        ansible-playbook ./playbooks/docker.yml
+
+  - Установить Gitlab
+
+        ansible-playbook ./playbooks/gitlab.yml --tags install,debug
+
+  - Добавить раннер
+
+        ansible-playbook ./playbooks/gitlab.yml --tags runner,debug
+
+  - Запушить коммит с `.gitlab-ci.yml` в репозитории в Gitlab как remote
+
+## Как проверить работоспособность:
+
+  - После установки Gitlab на VM можно перейти по http://VM_PUBLIC_IP.
+    _(Начальная инициализация Gitlab может занять несколько минут)_
+
+  - Добавленные для проекта раннеры видны тут: http://VM_PUBLIC_IP/group/project/-/settings/ci_cd
+
+  - Зайти в Slack-канал для просмотра уведомлений о пушах и сборках

@@ -1,0 +1,14 @@
+---
+- name: Set gitlab instance public ip as a fact
+  set_fact:
+    public_ip: "{{ hostvars[groups['gitlab'][0]].ansible_host }}"
+  tags: [ install, runner ]
+
+- debug: var=public_ip
+  tags: debug
+
+- include: install.yml
+  tags: install
+
+- include: runner.yml
+  tags: runner

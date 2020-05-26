@@ -1,0 +1,3 @@
+plugin: docker_machine
+groups:
+  gitlab: inventory_hostname.startswith('gitlab-ci')

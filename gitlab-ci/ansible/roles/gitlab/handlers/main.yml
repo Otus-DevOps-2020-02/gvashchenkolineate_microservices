@@ -1,0 +1,15 @@
+---
+- name: register runner
+  shell:
+    docker exec -it {{ container_name }} \
+    gitlab-runner register \
+    --non-interactive \
+    --url "http://{{ public_ip }}" \
+    --registration-token "{{ runner_token }}" \
+    --description "{{ runner.description }}" \
+    --tag-list "{{ runner.tags | join(',') }}" \
+    --executor "{{ runner.executor }}" \
+    --docker-image {{ runner.docker_image }} \
+    --docker-privileged \
+    --run-untagged \
+    --locked=false

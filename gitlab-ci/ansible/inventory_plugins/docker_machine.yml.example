@@ -1,0 +1,25 @@
+plugin: docker_machine
+strict: no
+daemon_required: yes
+split_tags: yes
+# see: https://docs.ansible.com/ansible/latest/user_guide/intro_patterns.html
+# see: https://docs.ansible.com/ansible/latest/plugins/inventory/constructed.html
+keyed_groups:
+  # create host groups by Gantry type, i.e. one for the routinator and one for routers.
+  # this allows us to target either the routinator or all routers
+  - key: dm_tag_gantry_type
+    separator: ''
+
+  # create host groups by router series
+  - key: dm_tag_gantry_component != routinator
+    separator: ''
+
+  # create host groups by Gantry component version, i.e. one for 'latest', one for '16.0.R6', etc.
+  # this allows us to target routers by version, though if different router types have the same version
+  # to be sure you should combine this with the previous group, e.g. hosts: vr_sros:&16_0_R6
+  - key: dm_tag_gantry_component_version
+    separator: ''
+compose:
+  # prevent Ansible blocking for user input to approve a previously unseen SSH host key as the host key
+  # will always be unseen when launching new machines in the cloud.
+  ansible_ssh_common_args: '"-o StrictHostKeyChecking=accept-new"'
