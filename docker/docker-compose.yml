@@ -10,7 +10,6 @@ services:
           - comment_db
 
   ui:
-    build: ../src/ui
     image: ${USERNAME}/ui:${VERSION_UI:-latest}
     ports:
       - ${UI_PORT:-9292}:${PUMA_PORT:-9292}/tcp
@@ -18,21 +17,33 @@ services:
       - front_net
 
   post:
-    build: ../src/post-py
     image: ${USERNAME}/post:${VERSION_POST:-latest}
     networks:
       - front_net
       - back_net
 
   comment:
-    build: ../src/comment
     image: ${USERNAME}/comment:${VERSION_COMMENT:-latest}
     networks:
       - front_net
       - back_net
 
+  prometheus:
+    image: ${USERNAME}/prometheus:${VERSION_PROMETHEUS:-latest}
+    ports:
+      - '9090:9090'
+    volumes:
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=1d'
+    networks:
+      - front_net
+      - back_net
 volumes:
   post_db:
+  prometheus_data:
 
 networks:
   front_net:
