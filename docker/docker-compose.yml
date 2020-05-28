@@ -10,7 +10,7 @@ services:
           - comment_db
 
   ui:
-    build: ./ui
+    build: ../src/ui
     image: ${USERNAME}/ui:${VERSION_UI:-1.0}
     ports:
       - ${UI_PORT:-9292}:${PUMA_PORT:-9292}/tcp
@@ -18,14 +18,14 @@ services:
       - front_net
 
   post:
-    build: ./post-py
+    build: ../src/post-py
     image: ${USERNAME}/post:${VERSION_POST:-1.0}
     networks:
       - front_net
       - back_net
 
   comment:
-    build: ./comment
+    build: ../src/comment
     image: ${USERNAME}/comment:${VERSION_COMMENT:-1.0}
     networks:
       - front_net
