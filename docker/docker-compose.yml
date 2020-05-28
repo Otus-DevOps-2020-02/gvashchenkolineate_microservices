@@ -62,6 +62,15 @@ services:
     networks:
       - front_net
       - back_net
+
+  # ---------------------------------------------------------- prometheus mongodb_exporter
+  mongodb_exporter:
+    image: bitnami/mongodb-exporter:${VERSION_MONGODB_EXPORTER:-latest}
+    environment:
+      - MONGODB_URI=mongodb://comment_db:27017
+    networks:
+      - back_net
+
 # ----------------------------------------------------------
 
 volumes:
