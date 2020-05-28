@@ -1,5 +1,6 @@
 version: '3.3'
 services:
+# ---------------------------------------------------------- db
   post_db:
     image: mongo:${VERSION_MONGO:-latest}
     volumes:
@@ -9,6 +10,7 @@ services:
         aliases:
           - comment_db
 
+# ---------------------------------------------------------- ui
   ui:
     image: ${USERNAME}/ui:${VERSION_UI:-latest}
     ports:
@@ -16,18 +18,21 @@ services:
     networks:
       - front_net
 
+# ---------------------------------------------------------- post
   post:
     image: ${USERNAME}/post:${VERSION_POST:-latest}
     networks:
       - front_net
       - back_net
 
+# ---------------------------------------------------------- comment
   comment:
     image: ${USERNAME}/comment:${VERSION_COMMENT:-latest}
     networks:
       - front_net
       - back_net
 
+# ---------------------------------------------------------- prometheus
   prometheus:
     image: ${USERNAME}/prometheus:${VERSION_PROMETHEUS:-latest}
     ports:
@@ -41,6 +46,24 @@ services:
     networks:
       - front_net
       - back_net
+
+# ---------------------------------------------------------- prometheus node-exporter
+  node-exporter:
+    image: prom/node-exporter:${VERSION_NODE_EXPORTER:-latest}
+    user: root
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"'
+    networks:
+      - front_net
+      - back_net
+# ----------------------------------------------------------
+
 volumes:
   post_db:
   prometheus_data:

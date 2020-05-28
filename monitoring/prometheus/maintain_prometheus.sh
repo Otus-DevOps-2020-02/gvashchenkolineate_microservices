@@ -12,7 +12,11 @@ docker stop prometheus
 
 export USER_NAME=gvashchenko
 
+# Build own Prometheus image
 docker build -t $USER_NAME/prometheus .
+
+# Build all service images
+for i in ui post-py comment; do cd src/$i; bash docker_build.sh; cd -; done
 
 # Running `docker/docker-compose up -d` uses `docker/docker-compose.override.yml`
 # and when using docker-machine with GCP it may cause a problem of failed reddit-services
@@ -20,3 +24,11 @@ docker build -t $USER_NAME/prometheus .
 # but are supposed to be the files on docker-machine itself.
 # Solution: use this command
 docker-compose -f docker-compose.yml up -d
+
+# Cease down a service and bring it up again
+docker-compose stop post
+docker-compose start post
+
+# Push images to dockerhub
+docker login
+for i in ui comment post prometheus; do docker push $USER_NAME/$i; done
