@@ -27,3 +27,26 @@ scrape_configs:
     static_configs:
       - targets:
           - 'mongodb_exporter:9216'
+
+  - job_name: blackbox # To get metrics about the exporter itself
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - blackbox_exporter:9115
+
+  - job_name: blackbox_services
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    static_configs:
+      - targets:
+          - http://ui:9292
+          - http://comment:9292
+          - http://post:5000
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox_exporter:9115
