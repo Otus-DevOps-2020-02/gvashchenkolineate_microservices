@@ -80,6 +80,15 @@ services:
       - front_net
       - back_net
 
+  # ---------------------------------------------------------- prometheus cloudprober
+  cloudprober:
+    image: ${USERNAME}/cloudprober:${VERSION_CLOUDPROBER:-latest}
+    ports:
+      - '9313:9313'
+    networks:
+      - front_net
+      - back_net
+
 # ----------------------------------------------------------
 
 volumes:

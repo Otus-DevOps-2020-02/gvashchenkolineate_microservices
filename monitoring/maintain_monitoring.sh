@@ -12,11 +12,10 @@ docker stop prometheus
 
 export USER_NAME=gvashchenko
 
-# Build own Prometheus image
+# Build own image
 docker build -t $USER_NAME/prometheus ./prometheus
-
-# Build own blackbox-exporter image
 docker build -t $USER_NAME/blackbox-exporter ./blackbox-exporter
+docker build -t $USER_NAME/cloudprober ./cloudprober
 
 # Build all service images
 for i in ui post-py comment; do cd src/$i; bash docker_build.sh; cd -; done
@@ -34,4 +33,4 @@ docker-compose start post
 
 # Push images to dockerhub
 docker login
-for i in ui comment post prometheus blackbox-exporter; do docker push $USER_NAME/$i; done
+for i in ui comment post prometheus blackbox-exporter cloudprober; do docker push $USER_NAME/$i; done
