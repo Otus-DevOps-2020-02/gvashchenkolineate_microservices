@@ -243,3 +243,76 @@ gvashchenkolineate microservices repository
   - Добавленные для проекта раннеры видны тут: http://VM_PUBLIC_IP/group/project/-/settings/ci_cd
 
   - Зайти в Slack-канал для просмотра уведомлений о пушах и сборках
+
+
+
+---
+
+# ДЗ-16 "Введение в мониторинг. Системы мониторинга."
+
+## В процессе сделано:
+
+  - Prometheus поднят в докер-контейнере на GCP-инстансе через docker-machine
+
+  - Образ Prometheus собирается из [Dockerfile](./monitoring/prometheus/Dockerfile)
+    добавлением файла настроек [prometheus.yml](./monitoring/prometheus/prometheus.yml)
+    с мониторингом всех сервисов reddit-приложения (ui, comment, post)
+
+  - Проведены эксперименты с отключением сервисов и мониторингом их хелхчеков в Prometheus
+
+  - В [docker-compose.yml](./docker/docker-compose.yml), помимо Prometheus,
+    добавлены экспортёры:
+
+    - Node exporter ( [github](https://github.com/prometheus/node_exporter), [dockerhub](https://hub.docker.com/r/prom/node-exporter/) )
+
+    - (⭐) Экспортера для MongoDB ( [github](https://github.com/percona/mongodb_exporter), [dockerhub](https://hub.docker.com/r/bitnami/mongodb-exporter) )
+
+    - (⭐) Blackbox exporter ( [github](https://github.com/prometheus/blackbox_exporter), [dockerhub](https://hub.docker.com/r/prom/blackbox-exporter/) )
+
+    - (⭐) Cloudprober ( [github](https://github.com/google/cloudprober), [dockerhub](https://hub.docker.com/r/cloudprober/cloudprober) )
+
+     _В случае последних двух собираются собственные образы, куда добавляется файл настроек_
+     _Версия родительского образа при этом зафиксирована на стабильную_
+
+  - (⭐) Добавлен простой [Makefile](./Makefile) для автоматизации процесса сборки
+    всех или любого из образов и загрузки в докер хаб
+
+  - Собранные обазы запушены в [Docker Hub](https://hub.docker.com/repository/docker/gvashchenko/)
+
+## Как запустить проект:
+
+  - Созадть GCP-инстанс скриптом [create_docker_machine.sh](./monitoring/prometheus/create_docker_machine.sh)
+
+  - Создать правила файервола скриптами [gcloud_add_firewall_rules_prometheus_puma.sh](./monitoring/prometheus/gcloud_add_firewall_rules_prometheus_puma.sh).
+
+    В целях отладки также можно добавить правила файервола для экспортеров:
+    [gcloud_add_firewall_rules_blackbox.sh](./monitoring/blackbox-exporter/gcloud_add_firewall_rules_blackbox.sh)
+    и [gcloud_add_firewall_rules_cloudprober.sh](./monitoring/cloudprober/gcloud_add_firewall_rules_cloudprober.sh)
+
+  - Переключиться на докер-окружение (см. подробнее в [здесь](./monitoring/maintain_monitoring.sh)))
+
+        eval $(docker-machine env docker-host)
+        export USER_NAME=gvashchenko
+
+  - Собрать все необходимые образы
+
+        `make b_all`
+
+  - Запустить докер-инфраструктуру
+
+        cd ./docker
+        docker-compose -f docker-compose.yml up -d
+
+## Как проверить работоспособность:
+
+  - Получить IP адрес VM с запущенными сервисами
+
+        docker-machine ip docker-host
+
+  - Приложение должно быть доступно по http://docker-host-ip:9292
+
+  - Prometheus должен быть доступен по http://docker-host-ip:9000
+
+  - Метрики cloudbox-exporter'а должы быть доступны по http://docker-host-ip:9115
+
+  - Метрики cloudprober'а должны быть доступны по http://docker-host-ip:9313
