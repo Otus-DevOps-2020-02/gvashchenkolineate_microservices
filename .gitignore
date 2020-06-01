@@ -36,3 +36,5 @@ venv/
 credentials.json
 
 .env
+
+build_info.txt

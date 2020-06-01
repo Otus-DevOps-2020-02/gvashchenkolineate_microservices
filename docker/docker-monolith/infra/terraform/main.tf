@@ -10,7 +10,7 @@ provider "google" {
 }
 //---------------------------------------------------------------------- docker hosts
 module docker-host {
-  source            = "./modules/docker-host"
+  source            = "modules\/docker-host"
   zone              = var.zone
   instance_count    = var.instance_count
   machine_type      = var.machine_type
