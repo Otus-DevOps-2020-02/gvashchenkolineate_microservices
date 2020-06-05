@@ -281,13 +281,13 @@ gvashchenkolineate microservices repository
 
 ## Как запустить проект:
 
-  - Созадть GCP-инстанс скриптом [create_docker_machine.sh](./monitoring/prometheus/create_docker_machine.sh)
+  - Созадть GCP-инстанс скриптом [create_docker_machine.sh](./monitoring/create_docker_machine.sh)
 
-  - Создать правила файервола скриптами [gcloud_add_firewall_rules_prometheus_puma.sh](./monitoring/prometheus/gcloud_add_firewall_rules_prometheus_puma.sh).
+  - Создать правила файервола скриптами [gcloud_add_firewall_rules_prometheus_puma.sh](./monitoring/gcloud_firewall_rules/gcloud_add_firewall_rules_prometheus_puma.sh).
 
     В целях отладки также можно добавить правила файервола для экспортеров:
-    [gcloud_add_firewall_rules_blackbox.sh](./monitoring/blackbox-exporter/gcloud_add_firewall_rules_blackbox.sh)
-    и [gcloud_add_firewall_rules_cloudprober.sh](./monitoring/cloudprober/gcloud_add_firewall_rules_cloudprober.sh)
+    [gcloud_add_firewall_rules_blackbox.sh](./monitoring/gcloud_firewall_rules/gcloud_add_firewall_rules_blackbox.sh)
+    и [gcloud_add_firewall_rules_cloudprober.sh](./monitoring/gcloud_firewall_rules/gcloud_add_firewall_rules_cloudprober.sh)
 
   - Переключиться на докер-окружение (см. подробнее в [здесь](./monitoring/maintain_monitoring.sh)))
 

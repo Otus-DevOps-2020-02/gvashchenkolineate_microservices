@@ -18,6 +18,16 @@ scrape_configs:
       - targets:
           - 'comment:9292'
 
+  - job_name: 'post'
+    static_configs:
+      - targets:
+          - 'post:5000'
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets:
+          - 'cadvisor:8080'
+
   - job_name: 'node'
     static_configs:
       - targets:
