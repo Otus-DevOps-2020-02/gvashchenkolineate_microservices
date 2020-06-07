@@ -49,6 +49,17 @@ services:
       - front_net
       - back_net
 
+# ---------------------------------------------------------- alertmanager
+  alertmanager:
+    image: ${USER_NAME}/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+    ports:
+      - 9093:9093
+    networks:
+      - front_net
+      - back_net
+
 # ---------------------------------------------------------- prometheus node-exporter
   node-exporter:
     image: prom/node-exporter:${VERSION_NODE_EXPORTER:-latest}

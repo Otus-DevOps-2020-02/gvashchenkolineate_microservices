@@ -18,7 +18,7 @@ b_all: b_src b_monitoring
 
 b_src: b_ui b_comment b_post
 
-b_monitoring: b_prometheus b_blackbox-exporter b_cloudprober
+b_monitoring: b_prometheus b_blackbox-exporter b_cloudprober b_alertmanager
 
 b_ui:
 	@echo  Build docker image for: ui
@@ -44,6 +44,10 @@ b_cloudprober:
 	@echo  Build docker image for: cloudprober
 	docker build -t $(user)/cloudprober ./monitoring/cloudprober
 
+b_alertmanager:
+	@echo  Build docker image for: alertmanager
+	docker build -t $(user)/alertmanager ./monitoring/alertmanager
+
 ###############################################
 ## Push images to docker hub
 ###############################################
@@ -52,7 +56,7 @@ p_all: p_src p_monitoring
 
 p_src: p_ui p_comment p_post
 
-p_monitoring: p_prometheus p_blackbox-exporter p_cloudprober
+p_monitoring: p_prometheus p_blackbox-exporter p_cloudprober p_alertmanager
 
 p_ui:
 	@echo  Push docker image of: ui
@@ -77,3 +81,7 @@ p_blackbox-exporter:
 p_cloudprober:
 	@echo  Push docker image of: cloudprober
 	docker push $(user)/cloudprober
+
+p_alertmanager:
+	@echo  Push docker image of: alermanager
+	docker push $(user)/alertmanager

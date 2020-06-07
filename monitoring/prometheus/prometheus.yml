@@ -68,3 +68,13 @@ scrape_configs:
     static_configs:
       - targets:
           - cloudprober:9313
+
+rule_files:
+  - "alerts.yml"
+
+alerting:
+  alertmanagers:
+    - scheme: http
+      static_configs:
+        - targets:
+            - "alertmanager:9093"
