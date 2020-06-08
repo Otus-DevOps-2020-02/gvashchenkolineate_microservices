@@ -48,6 +48,10 @@ b_alertmanager:
 	@echo  Build docker image for: alertmanager
 	docker build -t $(user)/alertmanager ./monitoring/alertmanager
 
+b_telegraf:
+	@echo  Build docker image for: telegraf
+	docker build -t $(user)/telegraf ./monitoring/telegraf
+
 ###############################################
 ## Push images to docker hub
 ###############################################
@@ -56,7 +60,7 @@ p_all: p_src p_monitoring
 
 p_src: p_ui p_comment p_post
 
-p_monitoring: p_prometheus p_blackbox-exporter p_cloudprober p_alertmanager
+p_monitoring: p_prometheus p_blackbox-exporter p_cloudprober p_alertmanager p_telegraf
 
 p_ui:
 	@echo  Push docker image of: ui
@@ -85,3 +89,7 @@ p_cloudprober:
 p_alertmanager:
 	@echo  Push docker image of: alermanager
 	docker push $(user)/alertmanager
+
+p_telegraf:
+	@echo  Push docker image of: telegraf
+	docker push $(user)/telegraf

@@ -107,6 +107,17 @@ services:
       - front_net
       - back_net
 
+  # ---------------------------------------------------------- telegraf
+  telegraf:
+    image: ${USER_NAME}/telegraf:${VERSION_TELEGRAF:-latest}
+    ports:
+      - '9273:9273'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      - front_net
+      - back_net
+
 # ----------------------------------------------------------
 
 volumes:
