@@ -118,6 +118,18 @@ services:
       - front_net
       - back_net
 
+  # ---------------------------------------------------------- Stackdriver_exporter
+  stackdriver_exporter:
+    image: prometheuscommunity/stackdriver-exporter
+    environment:
+      - STACKDRIVER_EXPORTER_GOOGLE_PROJECT_ID
+      - STACKDRIVER_EXPORTER_MONITORING_METRICS_TYPE_PREFIXES
+    ports:
+      - '9255:9255'
+    networks:
+      - front_net
+      - back_net
+
 # ----------------------------------------------------------
 
 volumes:

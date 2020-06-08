@@ -79,6 +79,12 @@ scrape_configs:
       - targets:
           - 'cloudprober:9313'
 
+  - job_name: 'stackdriver_exporter'
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+          - 'stackdriver_exporter:9255'
+
 rule_files:
   - "alerts.yml"
 
