@@ -15,7 +15,7 @@ services:
 
 # ---------------------------------------------------------- ui
   ui:
-    image: ${USERNAME}/ui:${VERSION_UI:-latest}
+    image: ${USER_NAME}/ui:${VERSION_UI:-latest}
     ports:
       - ${UI_PORT:-9292}:${PUMA_PORT:-9292}/tcp
     networks:
@@ -23,14 +23,14 @@ services:
 
 # ---------------------------------------------------------- post
   post:
-    image: ${USERNAME}/post:${VERSION_POST:-latest}
+    image: ${USER_NAME}/post:${VERSION_POST:-latest}
     networks:
       - front_net
       - back_net
 
 # ---------------------------------------------------------- comment
   comment:
-    image: ${USERNAME}/comment:${VERSION_COMMENT:-latest}
+    image: ${USER_NAME}/comment:${VERSION_COMMENT:-latest}
     networks:
       - front_net
       - back_net
