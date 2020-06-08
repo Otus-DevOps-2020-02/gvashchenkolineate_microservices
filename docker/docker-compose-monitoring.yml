@@ -45,6 +45,11 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention=1d'
+    extra_hosts:
+      # Docker host address should be explicitly set.
+      # To get actual value use this command in a container:
+      #    route -n | awk '/UG[ \t]/{print $2}'
+      - 'dockerhost:172.17.0.1'
     networks:
       - front_net
       - back_net

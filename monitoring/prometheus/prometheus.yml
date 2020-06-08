@@ -8,6 +8,11 @@ scrape_configs:
       - targets:
           - 'localhost:9090'
 
+  - job_name: 'docker'
+    static_configs:
+      - targets:
+          - 'dockerhost:9323'
+
   - job_name: 'ui'
     static_configs:
       - targets:
@@ -42,7 +47,7 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets:
-          - blackbox_exporter:9115
+          - 'blackbox_exporter:9115'
 
   - job_name: blackbox_services
     metrics_path: /probe
@@ -67,7 +72,7 @@ scrape_configs:
     scrape_interval: 10s
     static_configs:
       - targets:
-          - cloudprober:9313
+          - 'cloudprober:9313'
 
 rule_files:
   - "alerts.yml"
@@ -77,4 +82,4 @@ alerting:
     - scheme: http
       static_configs:
         - targets:
-            - "alertmanager:9093"
+            - 'alertmanager:9093'
