@@ -6,7 +6,7 @@ services:
 
 # ---------------------------------------------------------- grafana
   grafana:
-    image: grafana/grafana:${VERSION_GRAFANA:-latest}
+    image: ${USER_NAME}/grafana:${VERSION_GRAFANA:-latest}
     volumes:
       - grafana_data:/var/lib/grafana
     environment:
