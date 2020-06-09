@@ -11,6 +11,7 @@ set -ex
 # and defining `extra_host` dockerhost=172.17.0.1
 # (docker container default interface gateway address) if using docker-compose.
 # This way docker metrics are accessible on dockerhost:9323 in Prometheus scrape job.
+# To read: https://github.com/docker/docker.github.io/issues/6028#issue-297915571
 #
 
 docker-machine ssh docker-host "cat << EOF > /tmp/docker-daemon.json

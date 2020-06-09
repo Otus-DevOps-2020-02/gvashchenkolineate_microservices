@@ -20,7 +20,7 @@ services:
       - front_net
       - back_net
 
-# ---------------------------------------------------------- cAdvison
+# ---------------------------------------------------------- cAdvisor
   cadvisor:
     image: google/cadvisor:${VERSION_CADVISOR:-latest}
     volumes:
