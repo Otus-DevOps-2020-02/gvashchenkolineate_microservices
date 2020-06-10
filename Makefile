@@ -14,12 +14,15 @@ default: b_all p_all
 ###############################################
 ## Build images
 ###############################################
-b_all: b_src b_monitoring
+b_all: b_src b_monitoring b_logging
 
 b_src: b_ui b_comment b_post
 
 b_monitoring: b_prometheus b_blackbox-exporter b_cloudprober b_alertmanager b_grafana
 
+b_logging: b_fluentd
+
+# ---------------------------------------------- src
 b_ui:
 	@echo  Build docker image for: ui
 	docker build -t $(user)/ui ./src/ui/
@@ -32,6 +35,7 @@ b_post:
 	@echo  Build docker image for: post
 	docker build -t $(user)/post ./src/post-py/
 
+# ---------------------------------------------- monitoring
 b_prometheus:
 	@echo  Build docker image for: prometheus
 	docker build -t $(user)/prometheus ./monitoring/prometheus
@@ -56,16 +60,24 @@ b_grafana:
 	@echo  Build docker image for: grafana
 	docker build -t $(user)/grafana ./monitoring/grafana
 
+# ---------------------------------------------- logging
+b_fluentd:
+	@echo  Build docker image for: fluentd
+	docker build -t $(user)/fluentd ./logging/fluentd
+
 ###############################################
 ## Push images to docker hub
 ###############################################
 
-p_all: p_src p_monitoring
+p_all: p_src p_monitoring p_logging
 
 p_src: p_ui p_comment p_post
 
 p_monitoring: p_prometheus p_blackbox-exporter p_cloudprober p_alertmanager p_telegraf p_grafana
 
+p_logging: p_fluentd
+
+# ---------------------------------------------- src
 p_ui:
 	@echo  Push docker image of: ui
 	docker push $(user)/ui
@@ -78,6 +90,7 @@ p_post:
 	@echo  Push docker image of: post
 	docker push $(user)/post
 
+# ---------------------------------------------- monitoring
 p_prometheus:
 	@echo  Push docker image of: prometheus
 	docker push $(user)/prometheus
@@ -101,3 +114,8 @@ p_telegraf:
 p_grafana:
 	@echo  Push docker image of: grafana
 	docker push $(user)/grafana
+
+# ---------------------------------------------- logging
+p_fluentd:
+	@echo  Push docker image of: fluentd
+	docker push $(user)/fluentd
