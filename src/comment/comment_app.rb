@@ -47,7 +47,7 @@ prometheus.register(comment_count)
 
 # Schedule health check function
 scheduler = Rufus::Scheduler.new
-scheduler.every '5s' do
+scheduler.every '5m' do
   check = JSON.parse(healthcheck_handler(DB_URL, VERSION))
   set_health_gauge(comment_health_gauge, check['status'])
   set_health_gauge(comment_health_db_gauge, check['dependent_services']['commentdb'])

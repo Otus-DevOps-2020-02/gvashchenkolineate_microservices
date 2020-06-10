@@ -1,17 +1,14 @@
-FROM alpine:3.11.6
+FROM ruby:2.2
 
-ARG BUNDLER_VERSION=1.17.2
+RUN apt-get update -qq && apt-get install -y build-essential
 
-RUN apk add --no-cache ruby-full ruby-dev build-base \
-  && gem install bundler:$BUNDLER_VERSION
+ENV APP_HOME /app
+RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
 
-WORKDIR /app
-
-COPY Gemfile* ./
+ADD Gemfile* $APP_HOME/
 RUN bundle install
-COPY . .
 
-ENV COMMENT_DATABASE_HOST comment_db
-ENV COMMENT_DATABASE comments
+ADD . $APP_HOME
 
 CMD ["puma"]

@@ -10,7 +10,6 @@ from bson.objectid import ObjectId
 from bson.json_util import dumps
 from helpers import http_healthcheck_handler, log_event
 from py_zipkin.zipkin import zipkin_span, ZipkinAttrs
-from py_zipkin.transport import BaseTransportHandler
 
 
 CONTENT_TYPE_LATEST = str('text/plain; version=0.0.4; charset=utf-8')
@@ -19,64 +18,14 @@ POST_DATABASE_PORT = os.getenv('POST_DATABASE_PORT', '27017')
 ZIPKIN_HOST = os.getenv('ZIPKIN_HOST', 'zipkin')
 ZIPKIN_PORT = os.getenv('ZIPKIN_PORT', '9411')
 ZIPKIN_URL = "http://{0}:{1}/api/v1/spans".format(ZIPKIN_HOST, ZIPKIN_PORT)
-ZIPKIN_ENABLED = bool(os.getenv('ZIPKIN_ENABLED', False))
 
 log = structlog.get_logger()
 
 app = Flask(__name__)
 
-class DummyTransport(BaseTransportHandler):
-
-    def get_max_payload_bytes(self):
-        return None
-
-    def send(self, encoded_span):
-        # The collector does nothing at all
-        return None
-
-class HttpTransport(BaseTransportHandler):
-
-    def get_max_payload_bytes(self):
-        return None
-
-    def send(self, encoded_span):
-        # The collector expects a thrift-encoded list of spans. Instead of
-        # decoding and re-encoding the already thrift-encoded message, we can just
-        # add header bytes that specify that what follows is a list of length 1.
-        body = b'\x0c\x00\x00\x00\x01' + encoded_span
-        try:
-            requests.post(ZIPKIN_URL, data=body,
-                          headers={'Content-Type': 'application/x-thrift'})
-        except requests.exceptions.RequestException:
-            tb = traceback.format_exc()
-            log.error('zipkin_error',
-                      service='post',
-                      traceback=tb)
-
-zipkin_transport = HttpTransport() \
-    if ZIPKIN_ENABLED else DummyTransport()
-
-if ZIPKIN_ENABLED:
-    def zipkin_fill_attrs(headers):
-        try:
-            zipkin_attrs=ZipkinAttrs(
-                trace_id=headers['X-B3-TraceID'],
-                span_id=headers['X-B3-SpanID'],
-                parent_span_id=headers['X-B3-ParentSpanID'],
-                flags=headers['X-B3-Flags'],
-                is_sampled=headers['X-B3-Sampled'],
-            )
-        except KeyError:
-            log_event('warning', 'zipkin_fill_headers', "Tracing enabled and some Zipkin HTTP headers are missing")
-            zipkin_attrs = None
-            pass
-        return zipkin_attrs
-else:
-    def zipkin_fill_attrs(headers):
-        return None
 
 def init(app):
-    # application version info
+    # appication version info
     app.version = None
     with open('VERSION') as f:
         app.version = f.read().rstrip()
@@ -97,12 +46,20 @@ def init(app):
     ).users_post.posts
 
 
+def http_transport(encoded_span):
+    # The collector expects a thrift-encoded list of spans. Instead of
+    # decoding and re-encoding the already thrift-encoded message, we can just
+    # add header bytes that specify that what follows is a list of length 1.
+    body = '\x0c\x00\x00\x00\x01' + encoded_span
+    requests.post(ZIPKIN_URL, data=body,
+                  headers={'Content-Type': 'application/x-thrift'})
+
+
 # Prometheus endpoint
 @app.route('/metrics')
 def metrics():
     return Response(prometheus_client.generate_latest(),
                     mimetype=CONTENT_TYPE_LATEST)
-
 
 # Retrieve information about all posts
 @zipkin_span(service_name='post', span_name='db_find_all_posts')
@@ -124,9 +81,15 @@ def find_posts():
 def posts():
     with zipkin_span(
         service_name='post',
-        zipkin_attrs=zipkin_fill_attrs(request.headers),
+        zipkin_attrs=ZipkinAttrs(
+            trace_id=request.headers['X-B3-TraceID'],
+            span_id=request.headers['X-B3-SpanID'],
+            parent_span_id=request.headers['X-B3-ParentSpanID'],
+            flags=request.headers['X-B3-Flags'],
+            is_sampled=request.headers['X-B3-Sampled'],
+        ),
         span_name='/posts',
-        transport_handler=zipkin_transport,
+        transport_handler=http_transport,
         port=5000,
         sample_rate=100,
     ):
@@ -201,6 +164,7 @@ def find_post(id):
         stop_time = time.time()  # + 0.3
         resp_time = stop_time - start_time
         app.post_read_db_seconds.observe(resp_time)
+        time.sleep(3)
         log_event('info', 'post_find',
                   'Successfully found the post information',
                   {'post_id': id})
@@ -212,9 +176,15 @@ def find_post(id):
 def get_post(id):
     with zipkin_span(
         service_name='post',
-        zipkin_attrs=zipkin_fill_attrs(request.headers),
+        zipkin_attrs=ZipkinAttrs(
+            trace_id=request.headers['X-B3-TraceID'],
+            span_id=request.headers['X-B3-SpanID'],
+            parent_span_id=request.headers['X-B3-ParentSpanID'],
+            flags=request.headers['X-B3-Flags'],
+            is_sampled=request.headers['X-B3-Sampled'],
+        ),
         span_name='/post/<id>',
-        transport_handler=zipkin_transport,
+        transport_handler=http_transport,
         port=5000,
         sample_rate=100,
     ):

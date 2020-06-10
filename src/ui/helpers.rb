@@ -13,19 +13,19 @@ def log_event(type, name, message, params = '{}')
                  "event=#{name} | " \
                  "request_id=#{request.env['REQUEST_ID']} | " \
                  "message=\'#{message}\' | " \
-                 "params: #{params.to_json}")
+                 "params: #{params}")
   when 'info'
     logger.info('service=ui | ' \
                 "event=#{name} | " \
                 "request_id=#{request.env['REQUEST_ID']} | " \
                 "message=\'#{message}\' | " \
-                "params: #{params.to_json}")
+                "params: #{params}")
   when 'warning'
     logger.warn('service=ui | ' \
                 "event=#{name} | " \
                 "request_id=#{request.env['REQUEST_ID']} | " \
                 "message=\'#{message}\' |  " \
-                "params: #{params.to_json}")
+                "params: #{params}")
   end
 end
 

@@ -58,6 +58,8 @@ services:
   comment:
     image: ${USER_NAME}/comment:${VERSION_COMMENT:-latest}
     environment:
+      - COMMENT_DATABASE_HOST=comment_db
+      - COMMENT_DATABASE=comments
       - ZIPKIN_ENABLED
     networks:
       - front_net
