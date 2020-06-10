@@ -1,5 +1,17 @@
-version: '3'
+#######################################################################
+#                       Logging services
+#######################################################################
+version: '3.3'
 services:
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - front_net
+      - back_net
+
   fluentd:
     image: ${USER_NAME}/fluentd
     ports:
@@ -32,3 +44,5 @@ services:
 
 networks:
   logging_net:
+  back_net:
+  front_net:
