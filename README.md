@@ -410,3 +410,64 @@ gvashchenkolineate microservices repository
 
   - Метрики отдельных экспортеров доступны на их портах,
     если были добавлены соответствующие правила файервола.
+
+
+
+# ДЗ-18 "Логирование и распреде распределенная трассировка"
+
+## В процессе сделано:
+
+  - Собраны образы сервисов приложения под тэгом `logging`
+
+  - Создан отдельный [docker-compose-logging.yml](./docker/docker-compose-logging.yml),
+    который запускает сервисы [Fluentd](./logging/fluentd), ElasticSearch, Kibana, Zipkin
+
+    _ElasticSearch запускается в development & testing режиме с помощью env `discovery.type=single-node`_
+
+  - Севрис post настроен отправлять логи во Fluentd, которые парсятся json-фильтром.
+    Сервис ui настроен отправлять неструктурированные логи во Fluentd,
+    которые парсятся regex-ами или grok-фильтрами в нужный формат.
+
+  - В Kibana создан индекс-паттерн для наблюдения за логами.
+
+  - В Zipkin произведен трэйсинг запросов на ui сервис
+
+  - (⭐) Собраны образы сервисов приложения "со сломанным кодом" под тэгом `bugged`.
+    С помощью Zipkin отслежено, что в запросах на страницу отдельного поста
+    span выполнения функции `db_find_single_post` занимает ~3сек.
+    Обратившись к коду, стало очевидно, что надо удалить/закомментировать строку
+    [#167](https://github.com/Artemmkin/bugged-code/blob/e16d0e6bfec61a04fc38734af8e0466ed6e64e76/post-py/post_app.py#L167)
+
+## Как запустить проект:
+
+  - Создать GCP-инстанс скриптом [create_docker_machine.sh](./logging/create_docker_machine.sh)
+
+  - Создать правила файервола скриптами [gcloud_firewall_rules](./logging/gcloud_firewall_rules).
+
+  - Переключиться на докер-окружение (см. подробнее в [здесь](./logging/maintain.sh))
+
+        eval $(docker-machine env docker-host)
+        export USER_NAME=gvashchenko
+
+  - Запустить докер-инфраструктуру логгинга и приложения
+
+        cd ./docker
+        docker-compose -f docker-compose-logging.yml up -d
+        docker-compose -f docker-compose.yml up -d
+
+## Как проверить работоспособность:
+
+  - Получить IP адрес VM с запущенными сервисами
+
+        docker-machine ip docker-host
+
+  - Приложение должно быть доступно по http://docker-host-ip:9292
+
+  - Elasticsearch должен быть доступен по http://docker-host-ip:9200
+
+  - Kibana должна быть доступен по http://docker-host-ip:5601
+
+  - Zipkin должен быть доступен по http://docker-host-ip:9411
+
+  - Метрики отдельных экспортеров доступны на их портах,
+    если были добавлены соответствующие правила файервола.
