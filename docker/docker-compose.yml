@@ -1,3 +1,6 @@
+#######################################################################
+#                       Application services
+#######################################################################
 version: '3.3'
 services:
 # ---------------------------------------------------------- db
@@ -12,7 +15,7 @@ services:
 
 # ---------------------------------------------------------- ui
   ui:
-    image: ${USERNAME}/ui:${VERSION_UI:-latest}
+    image: ${USER_NAME}/ui:${VERSION_UI:-latest}
     ports:
       - ${UI_PORT:-9292}:${PUMA_PORT:-9292}/tcp
     networks:
@@ -20,80 +23,20 @@ services:
 
 # ---------------------------------------------------------- post
   post:
-    image: ${USERNAME}/post:${VERSION_POST:-latest}
+    image: ${USER_NAME}/post:${VERSION_POST:-latest}
     networks:
       - front_net
       - back_net
 
 # ---------------------------------------------------------- comment
   comment:
-    image: ${USERNAME}/comment:${VERSION_COMMENT:-latest}
+    image: ${USER_NAME}/comment:${VERSION_COMMENT:-latest}
     networks:
       - front_net
       - back_net
-
-# ---------------------------------------------------------- prometheus
-  prometheus:
-    image: ${USERNAME}/prometheus:${VERSION_PROMETHEUS:-latest}
-    ports:
-      - '9090:9090'
-    volumes:
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention=1d'
-    networks:
-      - front_net
-      - back_net
-
-# ---------------------------------------------------------- prometheus node-exporter
-  node-exporter:
-    image: prom/node-exporter:${VERSION_NODE_EXPORTER:-latest}
-    user: root
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"'
-    networks:
-      - front_net
-      - back_net
-
-  # ---------------------------------------------------------- prometheus mongodb_exporter
-  mongodb_exporter:
-    image: bitnami/mongodb-exporter:${VERSION_MONGODB_EXPORTER:-latest}
-    environment:
-      - MONGODB_URI=mongodb://comment_db:27017
-    networks:
-      - back_net
-
-  # ---------------------------------------------------------- prometheus blackbox_exporter
-  blackbox_exporter:
-    image: ${USERNAME}/blackbox-exporter:${VERSION_BLACKBOX_EXPORTER:-latest}
-    ports:
-      - '9115:9115'
-    networks:
-      - front_net
-      - back_net
-
-  # ---------------------------------------------------------- prometheus cloudprober
-  cloudprober:
-    image: ${USERNAME}/cloudprober:${VERSION_CLOUDPROBER:-latest}
-    ports:
-      - '9313:9313'
-    networks:
-      - front_net
-      - back_net
-
-# ----------------------------------------------------------
 
 volumes:
   post_db:
-  prometheus_data:
 
 networks:
   front_net:

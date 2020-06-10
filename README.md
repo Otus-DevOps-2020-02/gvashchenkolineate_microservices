@@ -281,13 +281,13 @@ gvashchenkolineate microservices repository
 
 ## Как запустить проект:
 
-  - Созадть GCP-инстанс скриптом [create_docker_machine.sh](./monitoring/prometheus/create_docker_machine.sh)
+  - Созадть GCP-инстанс скриптом [create_docker_machine.sh](./monitoring/create_docker_machine.sh)
 
-  - Создать правила файервола скриптами [gcloud_add_firewall_rules_prometheus_puma.sh](./monitoring/prometheus/gcloud_add_firewall_rules_prometheus_puma.sh).
+  - Создать правила файервола скриптами [gcloud_add_firewall_rules_prometheus_puma.sh](./monitoring/gcloud_firewall_rules/gcloud_add_firewall_rules_prometheus_puma.sh).
 
     В целях отладки также можно добавить правила файервола для экспортеров:
-    [gcloud_add_firewall_rules_blackbox.sh](./monitoring/blackbox-exporter/gcloud_add_firewall_rules_blackbox.sh)
-    и [gcloud_add_firewall_rules_cloudprober.sh](./monitoring/cloudprober/gcloud_add_firewall_rules_cloudprober.sh)
+    [gcloud_add_firewall_rules_blackbox.sh](./monitoring/gcloud_firewall_rules/gcloud_add_firewall_rules_blackbox.sh)
+    и [gcloud_add_firewall_rules_cloudprober.sh](./monitoring/gcloud_firewall_rules/gcloud_add_firewall_rules_cloudprober.sh)
 
   - Переключиться на докер-окружение (см. подробнее в [здесь](./monitoring/maintain_monitoring.sh)))
 
@@ -316,3 +316,97 @@ gvashchenkolineate microservices repository
   - Метрики cloudbox-exporter'а должы быть доступны по http://docker-host-ip:9115
 
   - Метрики cloudprober'а должны быть доступны по http://docker-host-ip:9313
+
+
+
+---
+
+# ДЗ-17 "Мониторинг приложения и инфраструктуры"
+
+## В процессе сделано:
+
+  - Рефакторинг docker-compose файла,
+    разбит на [docker-compose.yml](./docker/docker-compose.yml) и [docker-compose-monitoring.yml](./docker/docker-compose-monitoring.yml)
+
+  - (⭐) Все необходимые образы были собраны и запушены в докер хаб с помощью [Makefile](./Makefile)
+
+        `make b_all p_all`
+
+  - Добавлены источники метрик для Prometheus:
+
+    - cAdvisor для докер-метрик
+
+    - сервиса [post](./src/post-py)
+
+    - (⭐) cобственных метрик Докера (подробнее см. как запустить проект)
+
+    - (⭐) Telegraf для докер-метрик
+
+    - (⭐) Stack-driver
+
+      Для [включения возможности](https://github.com/prometheus-community/stackdriver_exporter#usage)
+      получения Stackdriver'ом метрик от Google API необходимо создавать docker-machine
+      с добавлением access scope'а https://www.googleapis.com/auth/monitoring.read.
+      Для этого используется скрипт [create_docker_machine.sh](./monitoring/create_docker_machine.sh).
+      Для примера запрошены метрики с префиксами `compute.googleapis.com/instance/cpu,compute.googleapis.com/instance/disk`.
+      При этом собираются [такие](./monitoring/metrics_examples/stackdriver_metrics) метрики.
+      Задать желаемые префиксы метрик можно через переменную `STACKDRIVER_EXPORTER_MONITORING_METRICS_TYPE_PREFIXES`
+
+      Метрики, отдаваемые cAdviser'ом, докером и Telegraf, для сравнения экспортированы в [файлы](./monitoring/metrics_examples).
+      Сравнение количества метрик:
+
+          | cadvisor    | 3.2 MB   |
+          | telegraf    | 743.9 kB |
+          | docker      | 32.6 kB  |
+          | stackdriver | 19.6 kB  |
+
+  - В составе мониторинг-кластера поднята [Grafanа](./monitoring/grafana).
+
+    (⭐) Образ графаны собирается вручную и провижнится Prometheus
+    [датасорсом](./monitoring/grafana/datasources.yml) и [дашбордами](./monitoring/grafana/dashboards),
+    как созданными вручную, так и скачанными с [сайта Grafana](https://grafana.com/dashboards).
+
+  - С помощью [Alertmanager](./monitoring/alertmanager) настроен алёрт в
+    Slack-канал [#georgy-vashchenko](https://devops-team-otus.slack.com/messages/georgy_vashchenko)
+    о недоступности любого из компонентов приложения
+
+## Как запустить проект:
+
+  - Созадть GCP-инстанс скриптом [create_docker_machine.sh](./monitoring/create_docker_machine.sh)
+
+  - Создать правила файервола скриптами [gcloud_firewall_rules](./monitoring/gcloud_firewall_rules).
+
+  - (⭐) Включить отдачу докер-метрик докер-демоном с помощью скрипта
+    [enable_docker_metrics_for_prometheus.sh](./monitoring/enable_docker_metrics_for_prometheus.sh)
+
+  - Переключиться на докер-окружение (см. подробнее в [здесь](./monitoring/maintain_monitoring.sh))
+
+        eval $(docker-machine env docker-host)
+        export USER_NAME=gvashchenko
+
+  - Запустить докер-инфраструктуру приложения и мониторинга
+
+        cd ./docker
+        docker-compose -f docker-compose.yml up -d
+        docker-compose -f docker-compose-monitoring.yml up -d
+
+  - В Grafan'e донастроить запровижиненные дашборды,
+    создавая нужные дашборд-переменные источника данных,
+    напр. `${DS_PROMETHEUS_SERVER}` или `${DS_PROMETHEUS}`
+
+## Как проверить работоспособность:
+
+  - Получить IP адрес VM с запущенными сервисами
+
+        docker-machine ip docker-host
+
+  - Приложение должно быть доступно по http://docker-host-ip:9292
+
+  - Prometheus должен быть доступен по http://docker-host-ip:9000
+
+  - cAdviser  должен быть доступен по http://docker-host-ip:8080
+
+  - Grafana должы быть доступна по http://docker-host-ip:3000
+
+  - Метрики отдельных экспортеров доступны на их портах,
+    если были добавлены соответствующие правила файервола.

@@ -1,0 +1,141 @@
+#######################################################################
+#                       Monitoring services
+#######################################################################
+version: '3.3'
+services:
+
+# ---------------------------------------------------------- grafana
+  grafana:
+    image: ${USER_NAME}/grafana:${VERSION_GRAFANA:-latest}
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    networks:
+      - front_net
+      - back_net
+
+# ---------------------------------------------------------- cAdvisor
+  cadvisor:
+    image: google/cadvisor:${VERSION_CADVISOR:-latest}
+    volumes:
+      - '/:/rootfs:ro'
+      - '/var/run:/var/run:rw'
+      - '/sys:/sys:ro'
+      - '/var/lib/docker/:/var/lib/docker:ro'
+    ports:
+      - '8080:8080'
+    networks:
+      - front_net
+      - back_net
+
+# ---------------------------------------------------------- prometheus
+  prometheus:
+    image: ${USER_NAME}/prometheus:${VERSION_PROMETHEUS:-latest}
+    ports:
+      - '9090:9090'
+    volumes:
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=1d'
+    extra_hosts:
+      # Docker host address should be explicitly set.
+      # To get actual value use this command in a container:
+      #    route -n | awk '/UG[ \t]/{print $2}'
+      - 'dockerhost:172.17.0.1'
+    networks:
+      - front_net
+      - back_net
+
+# ---------------------------------------------------------- alertmanager
+  alertmanager:
+    image: ${USER_NAME}/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+    ports:
+      - 9093:9093
+    networks:
+      - front_net
+      - back_net
+
+# ---------------------------------------------------------- prometheus node-exporter
+  node-exporter:
+    image: prom/node-exporter:${VERSION_NODE_EXPORTER:-latest}
+    user: root
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"'
+    networks:
+      - front_net
+      - back_net
+
+  # ---------------------------------------------------------- prometheus mongodb_exporter
+  mongodb_exporter:
+    image: bitnami/mongodb-exporter:${VERSION_MONGODB_EXPORTER:-latest}
+    environment:
+      - MONGODB_URI=mongodb://comment_db:27017
+    networks:
+      - back_net
+
+  # ---------------------------------------------------------- prometheus blackbox_exporter
+  blackbox_exporter:
+    image: ${USER_NAME}/blackbox-exporter:${VERSION_BLACKBOX_EXPORTER:-latest}
+    ports:
+      - '9115:9115'
+    networks:
+      - front_net
+      - back_net
+
+  # ---------------------------------------------------------- prometheus cloudprober
+  cloudprober:
+    image: ${USER_NAME}/cloudprober:${VERSION_CLOUDPROBER:-latest}
+    ports:
+      - '9313:9313'
+    networks:
+      - front_net
+      - back_net
+
+  # ---------------------------------------------------------- telegraf
+  telegraf:
+    image: ${USER_NAME}/telegraf:${VERSION_TELEGRAF:-latest}
+    ports:
+      - '9273:9273'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      - front_net
+      - back_net
+
+  # ---------------------------------------------------------- Stackdriver_exporter
+  stackdriver_exporter:
+    image: prometheuscommunity/stackdriver-exporter
+    environment:
+      - STACKDRIVER_EXPORTER_GOOGLE_PROJECT_ID
+      - STACKDRIVER_EXPORTER_MONITORING_METRICS_TYPE_PREFIXES
+    ports:
+      - '9255:9255'
+    networks:
+      - front_net
+      - back_net
+
+# ----------------------------------------------------------
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  front_net:
+  back_net:

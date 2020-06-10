@@ -8,6 +8,11 @@ scrape_configs:
       - targets:
           - 'localhost:9090'
 
+  - job_name: 'docker'
+    static_configs:
+      - targets:
+          - 'dockerhost:9323'
+
   - job_name: 'ui'
     static_configs:
       - targets:
@@ -17,6 +22,21 @@ scrape_configs:
     static_configs:
       - targets:
           - 'comment:9292'
+
+  - job_name: 'post'
+    static_configs:
+      - targets:
+          - 'post:5000'
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets:
+          - 'cadvisor:8080'
+
+  - job_name: 'telegraf'
+    static_configs:
+      - targets:
+          - 'telegraf:9273'
 
   - job_name: 'node'
     static_configs:
@@ -32,7 +52,7 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets:
-          - blackbox_exporter:9115
+          - 'blackbox_exporter:9115'
 
   - job_name: blackbox_services
     metrics_path: /probe
@@ -57,4 +77,20 @@ scrape_configs:
     scrape_interval: 10s
     static_configs:
       - targets:
-          - cloudprober:9313
+          - 'cloudprober:9313'
+
+  - job_name: 'stackdriver_exporter'
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+          - 'stackdriver_exporter:9255'
+
+rule_files:
+  - "alerts.yml"
+
+alerting:
+  alertmanagers:
+    - scheme: http
+      static_configs:
+        - targets:
+            - 'alertmanager:9093'
