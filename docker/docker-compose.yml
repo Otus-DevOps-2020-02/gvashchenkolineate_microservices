@@ -16,14 +16,40 @@ services:
 # ---------------------------------------------------------- ui
   ui:
     image: ${USER_NAME}/ui:${VERSION_UI:-latest}
+    environment:
+      - POST_SERVICE_HOST=post
+      - POST_SERVICE_PORT=5000
+      - COMMENT_SERVICE_HOST=comment
+      - COMMENT_SERVICE_PORT=9292
+      - ZIPKIN_ENABLED
     ports:
       - ${UI_PORT:-9292}:${PUMA_PORT:-9292}/tcp
+    depends_on:
+      - post
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: service.ui
     networks:
       - front_net
 
 # ---------------------------------------------------------- post
   post:
     image: ${USER_NAME}/post:${VERSION_POST:-latest}
+    environment:
+      - POST_DATABASE_HOST=post_db
+      - POST_DATABASE=posts
+      - ZIPKIN_ENABLED
+    depends_on:
+      - post_db
+    ports:
+      - "5000:5000"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: service.post
     networks:
       - front_net
       - back_net
@@ -31,6 +57,10 @@ services:
 # ---------------------------------------------------------- comment
   comment:
     image: ${USER_NAME}/comment:${VERSION_COMMENT:-latest}
+    environment:
+      - COMMENT_DATABASE_HOST=comment_db
+      - COMMENT_DATABASE=comments
+      - ZIPKIN_ENABLED
     networks:
       - front_net
       - back_net

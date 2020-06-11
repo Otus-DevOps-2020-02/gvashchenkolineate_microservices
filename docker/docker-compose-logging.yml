@@ -1,0 +1,48 @@
+#######################################################################
+#                       Logging services
+#######################################################################
+version: '3.3'
+services:
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - front_net
+      - back_net
+
+  fluentd:
+    image: ${USER_NAME}/fluentd
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    networks:
+      - logging_net
+
+  elasticsearch:
+    image: elasticsearch:${VERSION_ELASTIC:-7.4.0}
+    environment:
+      # single-node mode for testing and development
+      # production mode requires many settings to be configured
+      - discovery.type=single-node
+    expose:
+      - 9200
+    ports:
+      - "9200:9200"
+    networks:
+      - logging_net
+
+  kibana:
+    image: kibana:${VERSION_ELASTIC:-7.4.0}
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+    networks:
+      - logging_net
+
+networks:
+  logging_net:
+  back_net:
+  front_net:
