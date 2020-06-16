@@ -9,6 +9,10 @@
 
       Ctrl+b, "
 
+- Adjust pane size:
+
+      Ctrl+b, Alt+[ ↑ | ↓ ]
+
 - Switch between horizontally splitted panels:
 
       Ctrl+b, [ ↑ | ↓ ]

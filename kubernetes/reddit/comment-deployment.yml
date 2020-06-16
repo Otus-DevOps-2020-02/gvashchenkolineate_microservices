@@ -22,3 +22,6 @@ spec:
       containers:
         - image: gvashchenko/comment
           name: comment
+          env:
+            - name: COMMENT_DATABASE_HOST
+              value: comment-db

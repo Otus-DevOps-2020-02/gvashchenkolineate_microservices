@@ -22,3 +22,6 @@ spec:
       containers:
         - image: gvashchenko/post
           name: post
+          env:
+            - name: POST_DATABASE_HOST
+              value: post-db
