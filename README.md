@@ -499,3 +499,76 @@ gvashchenkolineate microservices repository
   - Проверить запуск подов reddit-приложения можно командой
 
         kubectl get pods
+
+# ДЗ-20 "Kubernetes. Запуск кластера и приложения. Модель безопасности"
+
+## В процессе сделано:
+
+  - Reddit-приложение развернуто в локальном K8s кластере `minikube` в отдельном нэймспэйсе `dev`.
+
+    По 3 реплики(пода) на каждый сервис: ui, comment, post.
+    И 1 реплика MongoDB с персистентным хранилищем.
+    Созданы k8s-сервисы для взаимодействия между компонентами и с БД,
+    а также для доступа к веб-интерфейсу всего приложения с помощью NodePort.
+
+    Опробован инструмент kubernetes-dashboard.
+
+  - (⭐) Создан GKE-кластер (как вручную, так и с помощью [Terraform](./kubernetes/terraform))
+
+  - Reddit-приложение развернуто в GKE k8s кластере.
+    Шаги для запуска см. в [KUBERNETES.md](./kubernetes/KUBERNETES.md)
+
+  - (⭐) Настроено использование dashboard addon'а для кластера.
+    Шаги по настройке см. в [DASHBOARD.md](./kubernetes/dashboard/DASHBOARD.md)
+
+## Как запустить проект:
+
+  - Создать k8s кластер
+
+     - локальный
+
+           minikube start
+
+     - или в GKE с помощью Terrafrom.
+       См [KUBERNETES.md](./kubernetes/KUBERNETES.md)
+
+           cd ./kubernetes/terraform
+           terraform init
+           terraform plan
+           terraforn apply
+
+  - Создать нэймспэйс
+
+        kubectl apply -f ./kubernetes/reddit/dev-namespace.yml
+
+  - Создать деплойменты и сервисы для приложения
+
+        kubectl apply -f ./kubernetes/reddit/.
+
+  - Включить dashboard addon для кластера в GKE и настроить его использование.
+    См. [DASHBOARD.md](./kubernetes/dashboard/DASHBOARD.md)
+    Запустить проксирование дашборда на локалхост
+
+        kubectl proxy
+
+## Как проверить работоспособность:
+
+  - Проверить текущий K8s контекст
+
+        kubectl config current-context
+
+  - Проверить наличие и состояние ресурсов приложения
+
+        kubectl get all -n dev
+
+  - Приложение должно быть доступно по `http://<node_ip>:<node_port>` ,
+    где `node_ip` можно получить из вывода команды
+
+        kubectl get nodes -o wide
+
+    а `nodeport` - из вывода команды
+
+        kubectl describe service ui -n dev | grep NodePort
+
+  - K8s дашборд должен быть доступен по
+    http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/

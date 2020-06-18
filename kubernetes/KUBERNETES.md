@@ -1,5 +1,7 @@
 # How to run Kubernetes in GCP
 
+_Requires Google provider v3.0.0+ for Terraform!_
+
 - Use [Terraform](./terraform) project to create K8s cluster in GKE
   and add firewall rules for nodeports
 
