@@ -1,0 +1,6 @@
+project           = "docker-276915"
+node_disk_size_gb = "20"
+machine_type      = "g1-small"
+region            = "europe-west1"
+zone              = "europe-west1-b"
+node_count        = "2"
