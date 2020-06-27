@@ -47,6 +47,13 @@
     kubectl describe ingress <ingress_name> -n <namespace>
     kubectl get ingress -n <namespace>
 
+
+Get `ui` Ingress external IP
+
+    kubectl get ingress ui -n dev -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+
+
+
 # Minikube Cheat Sheet
 
     minikube start [--driver=virtualbox]
