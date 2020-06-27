@@ -17,8 +17,8 @@ _Requires Google provider v3.0.0+ for Terraform!_
 
       kubectl apply -f ./reddit/dev-namespace.yml
 
-- Create K8s resources for reddit app
+- Create K8s resources for reddit app in `dev` namespace
 
-      kubectl apply -f ./reddit/
+      kubectl apply -f ./reddit/ -n dev
 
 - To enable K8s cluster dashboard follow instruction in [DASHBOARD.md](./dashboard/DASHBOARD.md)

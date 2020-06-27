@@ -43,6 +43,10 @@
     kubectl get roles --all-namespaces
     kubectl get clusterrole
 
+    # Can help troubleshooting Ingress Server error
+    kubectl describe ingress <ingress_name> -n <namespace>
+    kubectl get ingress -n <namespace>
+
 # Minikube Cheat Sheet
 
     minikube start [--driver=virtualbox]
