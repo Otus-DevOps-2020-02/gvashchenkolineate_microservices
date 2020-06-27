@@ -45,12 +45,12 @@
 
 # Minikube Cheat Sheet
 
-   minikube start [--driver=virtualbox]
-   minikube status
-   minikube delete
+    minikube start [--driver=virtualbox]
+    minikube status
+    minikube delete
 
-   minikube service list
-   minikube addons list
+    minikube service list
+    minikube addons list
 
-   minikube dashboard
-   minikube service kubernetes-dashboard -n kube-system
+    minikube dashboard
+    minikube service kubernetes-dashboard -n kube-system
