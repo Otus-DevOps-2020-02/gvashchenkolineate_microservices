@@ -22,3 +22,22 @@ _Requires Google provider v3.0.0+ for Terraform!_
       kubectl apply -f ./reddit/ -n dev
 
 - To enable K8s cluster dashboard follow instruction in [DASHBOARD.md](./dashboard/DASHBOARD.md)
+
+- TLS termination
+
+  - Create a TLS certificate for `ui` Ingress
+
+        export INGRESS_IP=$(kubectl get ingress ui -n dev -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=$INGRESS_IP"
+
+  - Upload the certificate to the K8s cluster
+
+        kubectl create secret tls ui-ingress --key tls.key --cert tls.crt -n dev
+
+  - Or use `kubectle apply -f . -n dev`
+    if yaml-manifest [ui-tls-secret.yml](./reddit/ui-tls-secret.yml) created
+    where
+
+        data:
+          tls.crt: cat ./tls.crt | base64
+          tls.key: cat ./tls.key | base64

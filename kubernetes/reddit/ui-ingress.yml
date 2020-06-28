@@ -3,11 +3,11 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: ui
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
 spec:
-  rules:
-    - http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: ui
-              servicePort: 9292
+  tls:
+    - secretName: ui-ingress
+  backend:
+    serviceName: ui
+    servicePort: 9292
