@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-db-traffic
+  labels:
+    app: reddit
+spec:
+  podSelector:
+    matchLabels:
+      app: reddit
+      component: mongo
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: reddit
+            matchExpressions:
+              - key: component
+                operator: In
+                values:
+                  - comment
+                  - post
