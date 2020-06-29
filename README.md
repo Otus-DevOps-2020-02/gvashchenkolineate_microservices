@@ -572,3 +572,83 @@ gvashchenkolineate microservices repository
 
   - K8s дашборд должен быть доступен по
     http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+
+# ДЗ-21 "Kubernetes. Networks, Storages"
+
+## В процессе сделано:
+
+  - Проведен эксперимент:
+    Деплойменты `kube-dns-autoscaler` и `kube-dns` (namespace `kube-system`) проскейлены в 0
+    В этой конфигурации поды перестают иметь сетевой доступ друг к другу.
+
+  - Опробованы следующие способы публикации `ui` сервиса:
+
+     - LoadBalancer
+     - Ingress в связке с LoadBalancer
+     - Ingress
+     - Ingress с TLS терминацией
+
+       (⭐) Созданный tls-сертификат загружается в кластер с помощью [ui-tls-secret.yml](./kubernetes/reddit/ui-tls-secret.yml)
+
+  - Сетевой доступ к MongoDB ограничен **post** и **comment** сервисами с помощью NetworkPolicy.
+    Для этого для кластера включается GKE-плагин network policy **CALICO** с помощью [Terraform](./kubernetes/terraform/main.tf)
+
+  - Для хранения данных MongoDB задействован volume:
+
+     - emptyDir (удаляется при удалениик деплоймента)
+     - gcePersistentDisk (используется целый диск)
+     - PersistentVolume (используется часть диска) по запросу PersistentVolumeClaim cо Standard storage-class'ом
+     - динамически PersistentVolumeClaim'ом с fast (ssd) storage-class'ом
+
+## Как запустить проект:
+
+  - Создать k8s кластер в GKE с помощью Terrafrom.
+    (Подробнее см. [KUBERNE``TES.md](./kubernetes/KUBERNETES.md))
+
+        cd ./kubernetes/terraform
+        terraform init
+        terraform plan
+        terraforn apply
+
+  - Создать namespace
+
+        kubectl apply -f ./kubernetes/reddit/dev-namespace.yml
+
+  - Создать деплойменты, сервисы и прочие ресурсы для приложения
+
+        kubectl apply -f ./kubernetes/reddit/. -n dev
+
+  - Выпустить TLS сертификат для Ingress
+
+        export INGRESS_IP=$(kubectl get ingress ui -n dev -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=$INGRESS_IP"
+
+    и загрузить его в кластер с помощью `kubectl apply -f ./ui-tls-secret.yml -n dev` где
+
+        data:
+          tls.crt: cat ./tls.crt | base64
+          tls.key: cat ./tls.key | base64
+
+  - Включить dashboard addon для кластера в GKE и настроить его использование.
+    См. [DASHBOARD.md](./kubernetes/dashboard/DASHBOARD.md)
+    Запустить проксирование дашборда на локалхост
+
+        kubectl proxy
+
+## Как проверить работоспособность:
+
+  - Проверить текущий K8s контекст
+
+        kubectl config current-context
+
+  - Проверить наличие и состояние ресурсов приложения
+
+        kubectl get all -n dev
+
+  - Приложение должно быть доступно по `https://<ingress_ip>` ,
+    где `ingress_ip` можно получить из вывода команды
+
+        kubectl get ingress ui -n dev -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+
+  - K8s дашборд должен быть доступен по
+    http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/

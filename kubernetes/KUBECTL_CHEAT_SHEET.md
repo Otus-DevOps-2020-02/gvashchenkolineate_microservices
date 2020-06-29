@@ -47,6 +47,8 @@
     kubectl describe ingress <ingress_name> -n <namespace>
     kubectl get ingress -n <namespace>
 
+    kubectl describe storageclass standard -n dev
+    kubectl get persistentvolume -n dev
 
 Get `ui` Ingress external IP
 

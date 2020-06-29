@@ -13,7 +13,7 @@ _Requires Google provider v3.0.0+ for Terraform!_
 
       gcloud container clusters get-credentials cluster-1 --zone europe-west1-b --project docker-276915
 
-- Enable GKE **Network-policy**
+- Enable GKE **Network-policy** (Already implemented in terraform project)
   _Can take a long time!_
 
        gcloud beta container clusters update cluster-1 --zone=europe-west1-b --update-addons=NetworkPolicy=ENABLED
@@ -22,6 +22,11 @@ _Requires Google provider v3.0.0+ for Terraform!_
 - Create `dev` namepspace
 
       kubectl apply -f ./reddit/dev-namespace.yml
+
+- Create K8s resources for reddit app in `dev` namespace
+
+      kubectl apply -f ./reddit/ -n dev
+
 - TLS termination
 
   - Create a TLS certificate for `ui` Ingress
@@ -39,9 +44,5 @@ _Requires Google provider v3.0.0+ for Terraform!_
         data:
           tls.crt: cat ./tls.crt | base64
           tls.key: cat ./tls.key | base64
-
-- Create K8s resources for reddit app in `dev` namespace
-
-      kubectl apply -f ./reddit/ -n dev
 
 - To enable K8s cluster dashboard follow instruction in [DASHBOARD.md](./dashboard/DASHBOARD.md)
