@@ -69,3 +69,10 @@ resource "google_container_cluster" "kubernetes-cluster" {
     update = "40m"
   }
 }
+//---------------------------------------------------------------------- mongodb persistent storage
+resource "google_compute_disk" "storage" {
+  # gcloud compute disks create --size=25GB --zone=us-central1-a reddit-mongo-disk
+  name  = "reddit-mongo-disk"
+  zone = var.zone
+  size = var.storage_size
+}

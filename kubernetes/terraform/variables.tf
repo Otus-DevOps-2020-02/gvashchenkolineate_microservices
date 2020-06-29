@@ -26,3 +26,8 @@ variable machine_type {
   description = "Node machine type"
   default     = "n1-standard-1"
 }
+
+variable storage_size {
+  description = "Size of the persistent disk for Mongodb, in GB"
+  default = 25
+}
