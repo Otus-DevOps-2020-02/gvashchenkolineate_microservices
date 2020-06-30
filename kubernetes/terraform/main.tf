@@ -53,8 +53,26 @@ resource "google_container_cluster" "kubernetes-cluster" {
     }
   }
 
+  addons_config {
+    network_policy_config {
+      disabled = false
+    }
+  }
+
+  network_policy {
+    enabled = true
+    provider = "CALICO"
+  }
+
   timeouts {
     create = "30m"
     update = "40m"
   }
+}
+//---------------------------------------------------------------------- mongodb persistent storage
+resource "google_compute_disk" "storage" {
+  # gcloud compute disks create --size=25GB --zone=us-central1-a reddit-mongo-disk
+  name  = "reddit-mongo-disk"
+  zone = var.zone
+  size = var.storage_size
 }

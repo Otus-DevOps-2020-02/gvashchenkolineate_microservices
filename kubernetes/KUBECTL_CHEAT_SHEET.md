@@ -43,14 +43,27 @@
     kubectl get roles --all-namespaces
     kubectl get clusterrole
 
+    # Can help troubleshooting Ingress Server error
+    kubectl describe ingress <ingress_name> -n <namespace>
+    kubectl get ingress -n <namespace>
+
+    kubectl describe storageclass standard -n dev
+    kubectl get persistentvolume -n dev
+
+Get `ui` Ingress external IP
+
+    kubectl get ingress ui -n dev -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+
+
+
 # Minikube Cheat Sheet
 
-   minikube start [--driver=virtualbox]
-   minikube status
-   minikube delete
+    minikube start [--driver=virtualbox]
+    minikube status
+    minikube delete
 
-   minikube service list
-   minikube addons list
+    minikube service list
+    minikube addons list
 
-   minikube dashboard
-   minikube service kubernetes-dashboard -n kube-system
+    minikube dashboard
+    minikube service kubernetes-dashboard -n kube-system
