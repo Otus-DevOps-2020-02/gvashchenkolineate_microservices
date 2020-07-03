@@ -588,7 +588,7 @@ gvashchenkolineate microservices repository
      - Ingress
      - Ingress с TLS терминацией
 
-       (⭐) Созданный tls-сертификат загружается в кластер с помощью [ui-tls-secret.yml](./kubernetes/reddit/ui-tls-secret.yml)
+       (⭐) Созданный tls-сертификат загружается в кластер с помощью [ui-tls-secret.yml](kubernetes/Charts/ui/templates/tls-secret.yml)
 
   - Сетевой доступ к MongoDB ограничен **post** и **comment** сервисами с помощью NetworkPolicy.
     Для этого для кластера включается GKE-плагин network policy **CALICO** с помощью [Terraform](./kubernetes/terraform/main.tf)
