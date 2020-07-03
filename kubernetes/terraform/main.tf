@@ -20,7 +20,7 @@ resource "google_compute_firewall" "kubernetes-nodeports" {
 }
 //---------------------------------------------------------------------- kubernetes cluster
 resource "google_container_cluster" "kubernetes-cluster" {
-  name               = "cluster-2"
+  name               = var.cluster_name
   location           = var.zone != "" ? var.zone : var.region
   network            = "default"
   initial_node_count = var.node_count
