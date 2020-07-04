@@ -6,3 +6,8 @@ service:
 image:
   repository: gvashchenko/ui
   tag: latest
+
+postHost:
+postPort:
+commentHost:
+commentPort:
