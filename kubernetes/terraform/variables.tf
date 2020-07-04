@@ -14,7 +14,7 @@ variable zone {
 
 variable cluster_name {
   description = "Cluster name"
-  default = "cluster-1"
+  default     = "cluster-1"
 }
 
 variable node_count {
@@ -34,5 +34,10 @@ variable machine_type {
 
 variable storage_size {
   description = "Size of the persistent disk for Mongodb, in GB"
-  default = 25
+  default     = 25
+}
+
+variable legacy_authorization {
+  description = "Enable legacy authorization specially for Gitlab installation"
+  default     = false
 }

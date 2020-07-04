@@ -35,6 +35,8 @@ resource "google_container_cluster" "kubernetes-cluster" {
     }
   }
 
+  enable_legacy_abac = var.legacy_authorization
+
   node_config {
     machine_type = var.machine_type
     disk_size_gb = var.node_disk_size_gb
@@ -51,6 +53,7 @@ resource "google_container_cluster" "kubernetes-cluster" {
     metadata = {
       disable-legacy-endpoints = "true"
     }
+
   }
 
   addons_config {
@@ -60,7 +63,7 @@ resource "google_container_cluster" "kubernetes-cluster" {
   }
 
   network_policy {
-    enabled = true
+    enabled  = true
     provider = "CALICO"
   }
 
@@ -72,7 +75,7 @@ resource "google_container_cluster" "kubernetes-cluster" {
 //---------------------------------------------------------------------- mongodb persistent storage
 resource "google_compute_disk" "storage" {
   # gcloud compute disks create --size=25GB --zone=us-central1-a reddit-mongo-disk
-  name  = "reddit-mongo-disk"
+  name = "reddit-mongo-disk"
   zone = var.zone
   size = var.storage_size
 }
