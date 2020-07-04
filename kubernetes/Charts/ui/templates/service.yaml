@@ -2,17 +2,18 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ui
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
   labels:
     app: reddit
     component: ui
+    release: {{ .Release.Name }}
 spec:
   type: NodePort
   ports:
-    - port: 9292
-      # nodePort: 32092  # optional, default 30000-32670
+    - port: {{ .Values.service.externalPort }}
       protocol: TCP
       targetPort: 9292
   selector:
     app: reddit
     component: ui
+    release: {{ .Release.Name }}
