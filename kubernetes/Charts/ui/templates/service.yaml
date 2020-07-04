@@ -12,7 +12,7 @@ spec:
   ports:
     - port: {{ .Values.service.externalPort }}
       protocol: TCP
-      targetPort: 9292
+      targetPort: {{ .Values.service.internalPort }}
   selector:
     app: reddit
     component: ui

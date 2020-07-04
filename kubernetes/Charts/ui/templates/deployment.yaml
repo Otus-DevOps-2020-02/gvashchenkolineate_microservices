@@ -25,10 +25,10 @@ spec:
         release: {{ .Release.Name }}
     spec:
       containers:
-        - image: gvashchenko/ui
+        - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           name: ui
           ports:
-            - containerPort: 9292
+            - containerPort: {{ .Values.service.internalPort }}
               name: ui
               protocol: TCP
           env:
