@@ -2,7 +2,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  name: {{ template "ui.fullname" . }}
   annotations:
     kubernetes.io/ingress.class: "gce"
 spec:
@@ -11,5 +11,5 @@ spec:
         paths:
           - path: /*
             backend:
-              serviceName: {{ .Release.Name }}-{{ .Chart.Name }}
+              serviceName: {{ template "ui.fullname" . }}
               servicePort: {{ .Values.service.externalPort }}
