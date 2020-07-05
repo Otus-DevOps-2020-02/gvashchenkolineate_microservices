@@ -21,7 +21,7 @@ docker build -t $USER_NAME/blackbox-exporter ./blackbox-exporter
 docker build -t $USER_NAME/cloudprober ./cloudprober
 
 # Build all service images
-for i in ui post-py comment; do cd src/$i; bash docker_build.sh; cd -; done
+for i in ui post comment; do cd src/$i; bash docker_build.sh; cd -; done
 
 
 # Running `docker/docker-compose up -d` uses `docker/docker-compose.override.yml`

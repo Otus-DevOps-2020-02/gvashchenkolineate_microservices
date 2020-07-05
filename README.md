@@ -112,7 +112,7 @@ gvashchenkolineate microservices repository
 
   - (⭐) Произведена оптимизация (минимизация размера) образов ui и comment сервисов
     путём их сборки на основе Ubuntu или Alpine-Linux, см.
-    - [post/Dockerfile](./src/post-py/Dockerfile)
+    - [post/Dockerfile](./src/post/Dockerfile)
     - [comment/Dockerfile](./src/comment/Dockerfile)
     - [ui/Dockerfile](./src/ui/Dockerfile)
     - [ui/Dockerfile.3](./src/ui/Dockerfile.3)
@@ -336,7 +336,7 @@ gvashchenkolineate microservices repository
 
     - cAdvisor для докер-метрик
 
-    - сервиса [post](./src/post-py)
+    - сервиса [post](./src/post)
 
     - (⭐) cобственных метрик Докера (подробнее см. как запустить проект)
 
@@ -434,7 +434,7 @@ gvashchenkolineate microservices repository
     С помощью Zipkin отслежено, что в запросах на страницу отдельного поста
     span выполнения функции `db_find_single_post` занимает ~3сек.
     Обратившись к коду, стало очевидно, что надо удалить/закомментировать строку
-    [#167](https://github.com/Artemmkin/bugged-code/blob/e16d0e6bfec61a04fc38734af8e0466ed6e64e76/post-py/post_app.py#L167)
+    [#167](https://github.com/Artemmkin/bugged-code/blob/e16d0e6bfec61a04fc38734af8e0466ed6e64e76/post/post_app.py#L167)
 
 ## Как запустить проект:
 

@@ -33,7 +33,7 @@ b_comment:
 
 b_post:
 	@echo  Build docker image for: post
-	docker build -t $(user)/post ./src/post-py/
+	docker build -t $(user)/post ./src/post/
 
 # ---------------------------------------------- monitoring
 b_prometheus:
