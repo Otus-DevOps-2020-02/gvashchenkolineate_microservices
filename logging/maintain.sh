@@ -7,7 +7,7 @@ eval $(docker-machine env docker-host)
 export USER_NAME=gvashchenko
 
 # Build all reddit app components images
-for i in ui post-py comment; do cd src/$i; bash docker_build.sh; docker push $USER_NAME/$i; cd -; done
+for i in ui post comment; do cd src/$i; bash docker_build.sh; docker push $USER_NAME/$i; cd -; done
 
 cd docker
 

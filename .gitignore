@@ -38,3 +38,5 @@ credentials.json
 .env
 
 build_info.txt
+
+kubernetes/Gitlab_ci

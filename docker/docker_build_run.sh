@@ -13,7 +13,7 @@ DOCKERHUB_LOGIN=gvashchenko
 
 echo Build docker images from sources
 docker pull mongo:latest
-docker build -t $DOCKERHUB_LOGIN/post:1.0 ./post-py
+docker build -t $DOCKERHUB_LOGIN/post:1.0 ./post
 docker build -t $DOCKERHUB_LOGIN/comment:1.0 ./comment
 docker build -t $DOCKERHUB_LOGIN/ui:1.0 ./ui
 

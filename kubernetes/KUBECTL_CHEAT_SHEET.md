@@ -50,11 +50,11 @@
     kubectl describe storageclass standard -n dev
     kubectl get persistentvolume -n dev
 
+    kubectl get events
+
 Get `ui` Ingress external IP
 
     kubectl get ingress ui -n dev -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
-
-
 
 # Minikube Cheat Sheet
 

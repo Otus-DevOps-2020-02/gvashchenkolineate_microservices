@@ -112,7 +112,7 @@ gvashchenkolineate microservices repository
 
   - (⭐) Произведена оптимизация (минимизация размера) образов ui и comment сервисов
     путём их сборки на основе Ubuntu или Alpine-Linux, см.
-    - [post/Dockerfile](./src/post-py/Dockerfile)
+    - [post/Dockerfile](./src/post/Dockerfile)
     - [comment/Dockerfile](./src/comment/Dockerfile)
     - [ui/Dockerfile](./src/ui/Dockerfile)
     - [ui/Dockerfile.3](./src/ui/Dockerfile.3)
@@ -336,7 +336,7 @@ gvashchenkolineate microservices repository
 
     - cAdvisor для докер-метрик
 
-    - сервиса [post](./src/post-py)
+    - сервиса [post](./src/post)
 
     - (⭐) cобственных метрик Докера (подробнее см. как запустить проект)
 
@@ -434,7 +434,7 @@ gvashchenkolineate microservices repository
     С помощью Zipkin отслежено, что в запросах на страницу отдельного поста
     span выполнения функции `db_find_single_post` занимает ~3сек.
     Обратившись к коду, стало очевидно, что надо удалить/закомментировать строку
-    [#167](https://github.com/Artemmkin/bugged-code/blob/e16d0e6bfec61a04fc38734af8e0466ed6e64e76/post-py/post_app.py#L167)
+    [#167](https://github.com/Artemmkin/bugged-code/blob/e16d0e6bfec61a04fc38734af8e0466ed6e64e76/post/post_app.py#L167)
 
 ## Как запустить проект:
 
@@ -588,7 +588,7 @@ gvashchenkolineate microservices repository
      - Ingress
      - Ingress с TLS терминацией
 
-       (⭐) Созданный tls-сертификат загружается в кластер с помощью [ui-tls-secret.yml](./kubernetes/reddit/ui-tls-secret.yml)
+       (⭐) Созданный tls-сертификат загружается в кластер с помощью [ui-tls-secret.yml](kubernetes/Charts/ui/templates/tls-secret.yml)
 
   - Сетевой доступ к MongoDB ограничен **post** и **comment** сервисами с помощью NetworkPolicy.
     Для этого для кластера включается GKE-плагин network policy **CALICO** с помощью [Terraform](./kubernetes/terraform/main.tf)
@@ -603,7 +603,7 @@ gvashchenkolineate microservices repository
 ## Как запустить проект:
 
   - Создать k8s кластер в GKE с помощью Terrafrom.
-    (Подробнее см. [KUBERNE``TES.md](./kubernetes/KUBERNETES.md))
+    (Подробнее см. [KUBERNETES.md](./kubernetes/KUBERNETES.md))
 
         cd ./kubernetes/terraform
         terraform init
@@ -652,3 +652,80 @@ gvashchenkolineate microservices repository
 
   - K8s дашборд должен быть доступен по
     http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+
+# ДЗ-22 "CI/CD в Kubernetes"
+
+## В процессе сделано:
+
+##### Helm
+
+  - Развертывание kubernetes-компонентов для ui, comment, post щаблонизировано с помощью Helm.
+    См [kubernetes/Charts](./kubernetes/Charts).
+    Для деплоя создан общий чат [reddit](./kubernetes/Charts/reddit), зависящий от ui, comment, post
+
+  - Установка Helm-релиза reddit-приложения осуществлена с помощью
+
+    - Helm2 + Tiller (server side)
+    - Helm2 + Tiller plugin
+    - Helm3
+
+    Подробнее см. [HELM.md](./kubernetes/HELM.md)
+
+##### Gitlab
+
+  - В Kubernetes-кластере поднят Gitlab с с помощью opensource Helm-чарта
+
+  - Под каждую из компонент Reddit-приложения, включая деплой,
+    создан отдельный репозиторий со своим CI/CD пайплайном
+
+  - Для feature-веток поднимаются динамические окружения
+
+  - Деплой всего приложения осуществяется на статические окружения: staging, production
+
+## Как запустить проект:
+
+  - Создать k8s кластер в GKE с помощью Terrafrom.
+    (Подробнее см. [KUBERNETES.md](./kubernetes/KUBERNETES.md))
+
+        cd ./kubernetes/terraform
+        terraform init
+        terraform plan
+        terraforn apply
+
+  - С помощью Helm задеплоить релиз
+
+        cd kubernetes/Charts
+        helm install --name <release-name> ./reddit
+
+  - Установить Gitlab
+
+        helm install --name gitlab ./gitlab-omnibus -f values.yaml
+
+  - Для доступа на Gitlab UI добавить в `/etc/hosts` IP адрес gitlab ingress'а
+
+        GITLAB_IP=$(kubectl get service -n nginx-ingress nginx -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+        echo "$GITLAB_IP gitlab-gitlab staging production" >> /etc/hosts
+
+    Поступить аналогично в случае динамических окружений feature-веток
+
+## Как проверить работоспособность:
+
+  - Проверить текущий K8s контекст
+
+        kubectl config current-context
+
+  - Проверить наличие и состояние ресурсов приложения
+
+        kubectl get all
+
+  - Приложение должно быть доступно по `https://<ingress_ip>` ,
+    где `ingress_ip` можно получить из вывода команды
+
+        kubectl get ingress ui -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+
+  - Gitlab UI должен быть доступен по `http://<gitlab_ingress_ip`
+
+        kubectl get service -n nginx-ingress nginx -o jsonpath="{.status.loadBalancer.ingress[0].ip}"
+
+  - Запушить изменения в репозиторий, соответсвующий компоненте: ui, comment, post, reddit.
+    Динамические и статические окружения должны быть доступны по `http://<staging|production|branch>`

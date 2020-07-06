@@ -39,7 +39,7 @@ _Requires Google provider v3.0.0+ for Terraform!_
         kubectl create secret tls ui-ingress --key tls.key --cert tls.crt -n dev
 
   - or pass the tsl certificate and key into the yaml-manifest
-    [ui-tls-secret.yml](./reddit/ui-tls-secret.yml) this way:
+    [ui-tls-secret.yml](Gitlab_ci/reddit-deploy/ui/templates/tls-secret.yml) this way:
 
         data:
           tls.crt: cat ./tls.crt | base64
