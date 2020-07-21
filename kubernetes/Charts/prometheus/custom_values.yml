@@ -612,7 +612,7 @@ serverFiles:
             action: keep
             regex: reddit;(production|staging)+
 
-      - job_name: 'reddit-endpoints'
+      - job_name: 'ui-endpoints'
         kubernetes_sd_configs:
           - role: endpoints
         relabel_configs:
@@ -622,10 +622,37 @@ serverFiles:
             target_label: kubernetes_namespace
           - source_labels: [__meta_kubernetes_service_name]
             target_label: kubernetes_name
-          # Use keep action to left only 'app=reddit' labeled service endpoints
-          - source_labels: [__meta_kubernetes_service_label_app]
+          - source_labels: [__meta_kubernetes_service_label_component]
             action: keep
-            regex: reddit
+            regex: ui
+
+      - job_name: 'post-endpoints'
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_service_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: kubernetes_name
+          - source_labels: [__meta_kubernetes_service_label_component]
+            action: keep
+            regex: post
+
+      - job_name: 'comment-endpoints'
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_service_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: kubernetes_name
+          - source_labels: [__meta_kubernetes_service_label_component]
+            action: keep
+            regex: comment
 
       - job_name: prometheus
         static_configs:
