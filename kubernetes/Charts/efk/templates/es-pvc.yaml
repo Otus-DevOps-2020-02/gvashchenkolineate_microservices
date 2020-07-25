@@ -1,0 +1,12 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "efk.fullname" . }}-elasticsearch-logging-claim
+spec:
+  storageClassName: {{ .Values.elasticsearch.storage.class }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.elasticsearch.storage.size }}

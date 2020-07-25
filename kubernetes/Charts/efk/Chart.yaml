@@ -1,0 +1,8 @@
+name: efk
+apiVersion: v1
+version: 1.0.0
+description: OTUS reddit application EFK
+maintainers:
+  - name: Someone
+    email: my@mail.com
+appVersion: 1.0
