@@ -7,8 +7,8 @@ cluster_name         = "cluster-1"
 node_count           = "2"
 storage_size         = "25"
 legacy_authorization = false
-logging_service = "none"
-monitoring_service = "none"
+logging_service      = "none"
+monitoring_service   = "none"
 oauth_scopes = [
   "https://www.googleapis.com/auth/devstorage.read_only",
   "https://www.googleapis.com/auth/logging.write",

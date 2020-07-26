@@ -37,7 +37,7 @@ resource "google_container_cluster" "kubernetes-cluster" {
 
   enable_legacy_abac = var.legacy_authorization
 
-  logging_service = var.logging_service
+  logging_service    = var.logging_service
   monitoring_service = var.monitoring_service
 
   node_config {
