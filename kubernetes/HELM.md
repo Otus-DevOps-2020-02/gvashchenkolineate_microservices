@@ -82,6 +82,8 @@ Install Reddit application chart with dependencies
 Add Helm repository
 
      helm repo add gitlab https://charts.gitlab.io
+     helm repo add nginx-stable https://helm.nginx.com/stable
+     helm repo update
 
 Download **gitlab** chart to edit
 

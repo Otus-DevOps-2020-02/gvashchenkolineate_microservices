@@ -729,3 +729,97 @@ gvashchenkolineate microservices repository
 
   - Запушить изменения в репозиторий, соответсвующий компоненте: ui, comment, post, reddit.
     Динамические и статические окружения должны быть доступны по `http://<staging|production|branch>`
+
+# ДЗ-23 "Kubernetes. Мониторинг и логирование"
+
+## В процессе сделано:
+
+  - Скорректирован [Terraform-проект](./kubernetes/terraform) для развертывания Kubernetes кластера.
+
+##### Мониторинг
+
+  - Из актуального Helm-чарта развернут Prometheus вместе с Alertmanager.
+    Настройки для чарта: [custom_values.yaml](./kubernetes/Charts/prometheus/custom_values.yaml)
+
+  - Добавлены таргеты для Prometheus для компонент reddit-приложения: ui, comment, post. Настроен relabling
+
+  - Из `stable/grafana` чарта развернута Grafana.
+
+    В ней добавлены дашборды:
+
+      - [Kubernetes cluster monitoring (via Prometheus)](https://grafana.com/grafana/dashboards/315)
+      - [Kubernetes Deployment metrics](https://grafana.com/grafana/dashboards/741)
+      - а также [busines metrics дашборды](./kubernetes/Charts/grafana/dashboards) из предыдущего задания по Логгированию.
+        Эти дашборды параметризованы Env-переменной, берущейся из kubernetes namepspace.
+
+##### Логгирование
+
+  - (⭐) На основе предложенных в ДЗ манифестов создан Helm-чарт [efk](./kubernetes/Charts/efk)
+
+  - С помощью этого чарта развернут релиз с Elasticsearch и Fluentd
+
+  - С помощью stable/kibana-чарта развернута Kibana
+
+## Как запустить проект:
+
+  - Создать k8s кластер в GKE с помощью Terrafrom.
+    (Подробнее см. [KUBERNETES.md](./kubernetes/KUBERNETES.md))
+
+        cd ./kubernetes/terraform
+        terraform init
+        terraform plan
+        terraforn apply
+
+  Дальнейшие действия описаны в [MONITORING.md](./kubernetes/MONITORING.md) и [LOGGING.md](./kubernetes/LOGGING.md).
+  А именно:
+
+  - Задеплоить reddit приложение
+
+       cd kubernetes/Charts/
+       helm upgrade staging --namespace <env> ./reddit --install
+
+  - С помощью Helm задеплоить nginx
+
+        helm install stable/nginx-ingress --name nginx
+
+    Прописать адрес nginx в `/etc/hosts`:
+
+        <IP> reddit reddit-prometheus reddit-grafana reddit-non-prod production redditkibana staging prod
+
+  - Задеплоить Prometheus
+
+        cd kubernetes/Charts/prometheus
+        helm upgrade prom . -f custom_values.yaml --install
+
+  - Установить Grafana
+
+        helm upgrade --install grafana stable/grafana \
+            --set "adminPassword=admin" \
+            --set "service.type=NodePort" \
+            --set "ingress.enabled=true" \
+            --set "ingress.hosts={reddit-grafana}"
+
+  - Задеплоить Elasticsearch и Fluentd
+
+        helm install --name efk ./efk
+
+  - Задеплоить Kibana
+
+        helm upgrade --install kibana stable/kibana \
+           --set "ingress.enabled=true" \
+           --set "ingress.hosts={reddit-kibana}" \
+           --set "env.ELASTICSEARCH_URL=http://efk-efk-elasticsearch-logging:9200" \
+           --version 0.1.1
+
+## Как проверить работоспособность:
+
+  - Проверить текущий K8s контекст
+
+        kubectl config current-context
+
+  - Проверить наличие и состояние ресурсов приложения
+
+        kubectl get all
+
+  - Приложение, Prometheus, Alertmanager, Grafana, Kibana должны быть доступны
+    по прописанным в `/etc/hosts` адресам по http.

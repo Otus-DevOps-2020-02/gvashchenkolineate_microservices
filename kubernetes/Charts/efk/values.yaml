@@ -1,0 +1,29 @@
+---
+elasticsearch:
+  service:
+    port: 9200
+
+  storage:
+    class: standard
+    size: 5Gi
+
+  ## Labels of a node Elasticsearch will be deployed to
+  nodeSelector:
+    elastichost: "true"
+
+  containers:
+    resources:
+      limits:
+        cpu: 1000m
+      requests:
+        cpu: 100m
+
+fluentd:
+  containers:
+    resources:
+      limits:
+        memory: 500Mi
+      requests:
+        cpu: 100m
+        memory: 200Mi
+  terminationGracePeriodSeconds: 30

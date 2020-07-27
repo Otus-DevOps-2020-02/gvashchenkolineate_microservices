@@ -41,3 +41,26 @@ variable legacy_authorization {
   description = "Enable legacy authorization specially for Gitlab installation"
   default     = false
 }
+
+variable logging_service {
+  description = "The logging service that the cluster should write logs to"
+  default     = "logging.googleapis.com/kubernetes"
+}
+
+variable monitoring_service {
+  description = "The monitoring service that the cluster should write metrics to"
+  default     = "monitoring.googleapis.com/kubernetes"
+}
+
+variable oauth_scopes {
+  type        = list(string)
+  description = "List of oauth scopes for cluster"
+  default = [
+    "https://www.googleapis.com/auth/devstorage.read_only",
+    "https://www.googleapis.com/auth/logging.write",
+    "https://www.googleapis.com/auth/monitoring",
+    "https://www.googleapis.com/auth/servicecontrol",
+    "https://www.googleapis.com/auth/service.management.readonly",
+    "https://www.googleapis.com/auth/trace.append"
+  ]
+}
